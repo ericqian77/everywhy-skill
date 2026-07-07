@@ -13,12 +13,13 @@ You are producing one interactive teaching page in the **Disassemble Course Form
 
 ### 1. Design the "aha" moment first, then work backward
 
-Before writing anything, answer three questions (this is SPEC.md's three-part test):
+Before writing anything, answer four questions (the first three are SPEC.md's three-part test):
 - What is the one idea, in one sentence?
 - What visible, animatable pieces does it break into?
 - What is the exact moment the pieces recombine and the idea becomes obvious?
+- **What are the common WRONG explanations of this idea?** Almost every good "why" question has a popular folk answer that's incorrect ("the sky reflects the ocean", "ships float because of air under the hull", "moon phases are Earth's shadow"). List them, and make sure your page explicitly names and refutes at least the most common one — a reader who arrives holding the wrong model needs it dislodged, not just papered over.
 
-Design step 3 first. Everything before it exists to set up that moment. If you can't state the reassembly moment in one sentence, you don't understand the idea well enough yet to start building — go back and think, don't start coding.
+Design the reassembly moment first. Everything before it exists to set up that moment. If you can't state it in one sentence, you don't understand the idea well enough yet to start building — go back and think, don't start coding.
 
 ### 2. If the content involves math, physics, or any checkable fact — derive and verify the numbers on paper before writing any drawing code
 
@@ -43,9 +44,16 @@ Fill in the `【【...】】` placeholders. Do not introduce a build step, a fra
 
 **Visual style is yours to invent.** The template gives you structural conventions, not a visual identity. Every course on this platform has its own color palette, typography, and personality — sameness across courses is a failure mode, not a goal. Look at the three examples in `examples/` for a sense of the *range* of visual styles that are all valid, not a style to copy.
 
-### 4. Walk the checklist
+### 4. Render it and LOOK at it — then walk the checklist
 
-Before considering the draft done, verify (see SPEC.md §4 for the authoritative list):
+**Correct data does not guarantee correct rendering.** A real bug from a real test run: a set of comparison bars had their widths computed perfectly by JS (the physics ratios were verified and exact), but the bars rendered at 0×0 because the CSS was missing one `display:block` — inline elements ignore `width`. No console error, no validator warning, values all correct in the DOM. The *only* way this class of bug gets caught is by rendering the page and looking at it.
+
+So, before considering the draft done:
+
+- **Open the page in a real browser (or take headless-browser screenshots) and visually confirm every visual component actually renders**: every canvas state, every DOM-based chart/meter/bar, every label. For data visualizations, check that the rendered geometry *visibly reflects the data* (four bars representing 1.00/1.95/4.35/6.97 must be four visibly different lengths). If you can inspect computed styles, verify rendered sizes are non-zero and proportional — don't just confirm the JS set the values.
+- **If your environment cannot render a browser at all, say so explicitly in your delivery note** ("not visually verified — needs a human/browser pass") instead of silently skipping. An honestly flagged gap is fine; a silent one ships broken pages.
+
+Then verify the rest (see SPEC.md §4 for the authoritative list):
 
 - Works at 360px width — no horizontal scroll, text readable, animation intact
 - Works with `prefers-reduced-motion` enabled — content still makes sense (scroll-driven pages degrade to step-by-step or a static frame; time-driven animations pause by default or hide their play control)

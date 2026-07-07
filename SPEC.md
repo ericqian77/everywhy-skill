@@ -90,6 +90,7 @@ A submission consists of exactly two artifacts:
 
 ## 四、发布前检查清单 / Pre-publish checklist
 
+- [ ] **每个视觉组件都在真实渲染中亲眼确认过**：canvas 各状态、DOM 图表/比例条/标签都真的画出来了，数据可视化的渲染几何与数据可见地对应（数值对但渲染成 0×0 的静默失效只有看渲染结果才能发现）；环境无法渲染浏览器时必须在交付说明里显式声明"未经视觉验证"
 - [ ] 手机宽度（360px）下试过：无横向滚动、文字可读、动画完整
 - [ ] 系统开启"减弱动态效果"后试过：内容仍然能看懂
 - [ ] 单课程校验器全绿（见「五、校验」）
@@ -99,7 +100,7 @@ A submission consists of exactly two artifacts:
 - [ ] `file://` 直接打开正常（无控制台报错）
 - [ ] 涉及数学/物理等可验证内容的部分，已被独立复算确认（不能只有生成者自查）
 
-Checklist (EN): mobile 360px OK · reduced-motion OK · single-course validator green · title/description/OG present with absolute image URL · sister variants cross-linked · has a return link · opens cleanly via `file://` · verifiable content independently re-derived, not self-checked only.
+Checklist (EN): every visual component visually confirmed in a real render (correct data ≠ correct rendering; declare explicitly if your environment cannot render) · mobile 360px OK · reduced-motion OK · single-course validator green · title/description/OG present with absolute image URL · sister variants cross-linked · has a return link · opens cleanly via `file://` · verifiable content independently re-derived, not self-checked only.
 
 ---
 
@@ -127,3 +128,4 @@ Content displayed on this platform defaults to **CC BY-SA 4.0**. Submitting cont
 ## 变更记录 / Changelog
 
 - **v1**（2026-07-06）：首个版本，从单一仓库的 `authoring.md` + `validate-content.js` 抽取、解耦、版本化。
+- **v1 清单补充**（2026-07-07）：检查清单新增「每个视觉组件在真实渲染中亲眼确认」条目——来自首轮外部实测：一处数据正确但因 CSS `display` 缺失渲染为 0×0 的比例条，任何自动校验都无法发现，只有看渲染结果才能发现。schema 无变化，版本号不变。

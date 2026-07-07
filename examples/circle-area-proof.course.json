@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "slug": "circle-area-proof",
+  "topic": "circle-area",
+  "title": "Why is a circle's area πr²?",
+  "summary": "Slice the circle into wedges, rearrange them into a rectangle, and watch πr² fall out.",
+  "tag": "geometry",
+  "level": "general",
+  "lang": "en",
+  "accent": "#6C63D9",
+  "author": "everywhy",
+  "license": "CC BY-SA 4.0",
+  "prerequisites": null,
+  "age_range": null
+}

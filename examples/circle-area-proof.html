@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why is the area of a circle πr²?</title>
+<meta name="description" content="Slice the circle into wedges, rearrange them into a rectangle, and watch πr² fall out." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Why is the area of a circle πr²?" />
+<meta property="og:description" content="Slice the circle into wedges, rearrange them into a rectangle, and watch πr² fall out." />
+<meta property="og:image" content="https://everywhy.ai/assets/og-default.png" />
+<meta property="og:locale" content="en_US" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F5F6F8;
+    --panel:#FFFFFF;
+    --ink:#1B2436;
+    --ink-soft:#5A6478;
+    --ink-faint:#8089A0;
+    --line:#E2E6EE;
+    --line-strong:#CBD2DF;
+    --violet:#6C63D9;
+    --violet-deep:#2E2A6B;
+    --teal:#1D9E75;
+    --teal-deep:#0F6E56;
+    --crust:#E0892E;
+    --crust-deep:#8A4F0E;
+    --crust-soft:#FBEBD8;
+    --grid: rgba(108,99,217,0.06);
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--ink);
+    font-family:'Inter', system-ui, sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:760px; margin:0 auto; padding:64px 24px 96px; }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--violet); margin:0 0 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width:28px; height:1px; background:var(--violet); display:inline-block; }
+
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:600;
+    font-size:clamp(30px, 6vw, 52px); line-height:1.08;
+    letter-spacing:-0.02em; margin:0 0 20px;
+  }
+  h1 em{ font-style:normal; font-family:'Space Mono', monospace; color:var(--violet); }
+  .lede{ font-size:18px; color:var(--ink-soft); max-width:54ch; margin:0; }
+
+  .figure{
+    margin:44px 0 8px; background:var(--panel);
+    border:1px solid var(--line-strong); border-radius:16px;
+    padding:26px 24px 28px;
+    box-shadow:0 18px 40px -28px rgba(27,36,54,0.25);
+    position:relative;
+  }
+  .figure::before{
+    content:"FIG. 1 — SLICE & REARRANGE";
+    position:absolute; top:-9px; left:24px;
+    font-family:'Space Mono', monospace; font-size:10.5px; letter-spacing:0.16em;
+    color:var(--ink-faint); background:var(--panel); padding:0 8px;
+  }
+
+  .controls{ display:flex; flex-direction:column; gap:16px; margin-bottom:16px; }
+  .ctl-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .ctl-label{ font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.04em; color:var(--ink-soft); min-width:104px; }
+  .ctl-val{ font-family:'Space Mono', monospace; font-weight:700; font-size:13px; color:var(--ink); min-width:66px; text-align:right; }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; flex:1; min-width:150px;
+    height:4px; border-radius:99px; background:var(--line-strong); cursor:pointer; margin:0;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+    background:var(--violet); border:3px solid var(--panel); box-shadow:0 0 0 1px var(--violet);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; background:var(--violet);
+    border:3px solid var(--panel); box-shadow:0 0 0 1px var(--violet);
+  }
+  input[type=range]:focus-visible{ outline:2px solid var(--violet); outline-offset:6px; }
+
+  button.action{
+    font-family:'Space Grotesk', sans-serif; font-weight:500; font-size:15px;
+    color:#fff; background:var(--violet); border:none; border-radius:10px;
+    padding:11px 20px; cursor:pointer; transition:transform .08s ease, background .15s ease;
+  }
+  button.action:hover{ background:#5b53c4; }
+  button.action:active{ transform:scale(0.97); }
+  button.action:focus-visible{ outline:2px solid var(--violet-deep); outline-offset:3px; }
+  .ctl-hint{ font-size:13px; color:var(--ink-faint); }
+
+  canvas{ width:100%; max-width:680px; height:auto; aspect-ratio:640/340; display:block; margin:4px auto 0; }
+
+  .caption{
+    margin:14px auto 0; max-width:560px; text-align:center;
+    font-size:15px; color:var(--ink-soft); min-height:48px;
+  }
+  .caption b{ color:var(--ink); font-weight:500; }
+  .dot{ display:inline-block; width:11px; height:11px; border-radius:50%; vertical-align:-1px; margin-right:3px; }
+
+  .legend{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  .legend span{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-soft); }
+  .swatch{ width:13px; height:13px; border-radius:3px; }
+
+  .cards{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin-top:22px; }
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .card .k{ font-family:'Space Mono', monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .card .v{ font-family:'Space Mono', monospace; font-weight:700; font-size:22px; margin:4px 0 2px; }
+  .card .v.violet{ color:var(--violet); }
+  .card .v.teal{ color:var(--teal); }
+  .card .sub{ font-size:12px; color:var(--ink-soft); }
+
+  .steps{ margin:60px 0 0; }
+  .steps h2{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 26px;
+  }
+  .step{ display:grid; grid-template-columns:48px 1fr; gap:20px; padding-bottom:30px; position:relative; }
+  .step:not(:last-child)::after{ content:""; position:absolute; left:23px; top:46px; bottom:6px; width:1px; background:var(--line-strong); }
+  .step .num{
+    font-family:'Space Mono', monospace; font-weight:700; font-size:14px;
+    width:46px; height:46px; border-radius:50%; border:1px solid var(--line-strong);
+    background:var(--panel); display:flex; align-items:center; justify-content:center;
+    color:var(--violet); position:relative; z-index:1;
+  }
+  .step h3{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:19px; margin:9px 0 6px; letter-spacing:-0.01em; }
+  .step p{ margin:0; color:var(--ink-soft); font-size:16px; }
+  .mono{ font-family:'Space Mono', monospace; color:var(--ink); }
+  .tag-crust{ color:var(--crust-deep); font-weight:500; }
+  .tag-side{ color:var(--teal-deep); font-weight:500; }
+
+  .split{ margin-top:16px; }
+  .bar{
+    height:34px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace; font-weight:700; font-size:13px;
+    color:var(--crust-deep); background:var(--crust-soft); border:1px solid #F0C893;
+  }
+  .bar.full{ width:100%; }
+  .bar.half{ width:50%; background:#F8DBB4; }
+  .split .lbl{ font-size:12px; color:var(--ink-faint); text-align:center; margin:7px 0; font-family:'Space Mono', monospace; letter-spacing:0.04em; }
+  .split .halves{ display:flex; flex-direction:column; gap:6px; }
+  .note{
+    margin-top:18px; background:var(--paper); border:1px solid var(--line);
+    border-left:3px solid var(--crust); border-radius:0 10px 10px 0;
+    padding:14px 16px; font-size:14.5px; color:var(--ink-soft);
+  }
+  .note .nh{ font-family:'Space Mono', monospace; font-weight:700; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--crust-deep); display:block; margin-bottom:6px; }
+  .note .calc{ font-family:'Space Mono', monospace; color:var(--ink); display:block; margin-top:8px; }
+
+  .conclude{ margin-top:14px; border-top:1px solid var(--line-strong); padding-top:32px; }
+  .bigformula{
+    font-family:'Space Mono', monospace; font-weight:700;
+    font-size:clamp(28px, 7vw, 44px); text-align:center; letter-spacing:0.01em; margin:8px 0 18px;
+  }
+  .bigformula .eq{ color:var(--ink-faint); margin:0 10px; }
+  .bigformula .res{ color:var(--violet); }
+  .limit{ text-align:center; color:var(--ink-soft); font-size:15px; max-width:52ch; margin:0 auto; }
+  .limit .mono{ background:rgba(108,99,217,0.08); padding:2px 7px; border-radius:5px; }
+
+  footer{ margin-top:60px; text-align:center; font-family:'Space Mono', monospace; font-size:11.5px; letter-spacing:0.08em; color:var(--ink-faint); }
+
+  @media (max-width:560px){
+    .cards{ grid-template-columns:1fr; }
+    .ctl-label{ min-width:0; flex-basis:100%; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    button.action, input[type=range]::-webkit-slider-thumb{ transition:none; }
+  }
+</style>
+</head>
+<body>
+<a href="../index.html" class="dz-back">← 拆解</a><style>.dz-back{position:fixed;top:16px;left:16px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-back:hover{transform:translateY(-1px);}</style>
+<nav class="dz-alt" aria-label="Other versions"><a href="circle-area-for-kids-en.html">Kids</a><a href="circle-area-for-kids.html">中文·儿童</a></nav><style>.dz-alt{position:fixed;top:16px;right:16px;z-index:9999;display:flex;gap:6px;}.dz-alt a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-alt a:hover{transform:translateY(-1px);}</style>
+<main class="wrap">
+
+  <p class="eyebrow">Geometry · A visual proof</p>
+  <h1>Why is the area of a circle <em>πr²</em>?</h1>
+  <p class="lede">Cut a circle into thin wedges, then slide them back together a different way. The pieces rearrange into a shape you already know how to measure — a rectangle.</p>
+
+  <section class="figure" aria-label="Interactive figure: slicing a circle and rearranging it into a rectangle">
+    <div class="controls">
+      <div class="ctl-row">
+        <span class="ctl-label">Slices</span>
+        <input type="range" id="n" min="2" max="64" step="2" value="10" aria-label="Number of slices" />
+        <span class="ctl-val" id="nout">10 pieces</span>
+      </div>
+      <div class="ctl-row">
+        <button class="action" id="toggle">Unroll into rectangle</button>
+        <span class="ctl-hint">More slices &rarr; flatter edges &rarr; closer to a true rectangle</span>
+      </div>
+    </div>
+
+    <canvas id="cv"></canvas>
+
+    <p class="caption" id="caption"></p>
+
+    <div class="legend" aria-hidden="true">
+      <span><span class="swatch" style="background:#6C63D9"></span>wedge, tip up</span>
+      <span><span class="swatch" style="background:#1D9E75"></span>wedge, tip down</span>
+      <span><span class="swatch" style="background:#E0892E"></span>circumference (the curved crust)</span>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="k">Width</div>
+        <div class="v violet">&asymp; &pi;r</div>
+        <div class="sub">half of the circumference 2&pi;r</div>
+      </div>
+      <div class="card">
+        <div class="k">Height</div>
+        <div class="v teal">= r</div>
+        <div class="sub">the straight side is a radius</div>
+      </div>
+      <div class="card">
+        <div class="k">Area</div>
+        <div class="v">&pi;r &middot; r</div>
+        <div class="sub">width &times; height</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <h2>The reasoning</h2>
+
+    <div class="step">
+      <div class="num">01</div>
+      <div>
+        <h3>Slice the circle</h3>
+        <p>Cut it from the centre into <span class="mono">n</span> identical wedges, like a pizza. Each wedge has two <span class="tag-side">straight sides</span> (each one a radius, length <span class="mono">r</span>) and one <span class="tag-crust">curved crust</span> (a small piece of the circumference).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">02</div>
+      <div>
+        <h3>Alternate the wedges</h3>
+        <p>Lay them in a row, flipping every other one so the tips point up, down, up, down. They mesh together into one long strip — almost a rectangle.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">03</div>
+      <div>
+        <h3>Where the width comes from</h3>
+        <p>Add up every <span class="tag-crust">curved crust</span> and you get the whole way around the circle — the circumference, <span class="mono">2&pi;r</span>. After alternating, half of that crust lines the top of the strip and half lines the bottom. So each long edge is <strong>half</strong> the circumference:</p>
+        <div class="split">
+          <div class="bar full">whole circumference = 2&pi;r</div>
+          <div class="lbl">&darr; split evenly between top and bottom</div>
+          <div class="halves">
+            <div class="bar half">top edge = &pi;r</div>
+            <div class="bar half">bottom edge = &pi;r</div>
+          </div>
+        </div>
+        <div class="note">
+          <span class="nh">But why is the circumference 2&pi;r?</span>
+          The number <span class="mono">&pi;</span> is what you get when you compare the distance <em>around</em> a circle to the distance <em>across</em> it: circumference = <span class="mono">&pi;</span> &times; diameter. The diameter is two radii, so diameter = <span class="mono">2r</span>, which makes the circumference <span class="mono">&pi; &times; 2r = 2&pi;r</span>. Halving it removes the 2:
+          <span class="calc">2&pi;r &divide; 2 = &pi;r</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">04</div>
+      <div>
+        <h3>Where the height comes from</h3>
+        <p>The <span class="tag-side">straight sides</span> of the wedges become the short sides of the rectangle. Each one is a radius, so the height is exactly <span class="mono">r</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="conclude">
+    <div class="bigformula">A <span class="eq">=</span> &pi;r <span class="eq">&times;</span> r <span class="eq">=</span> <span class="res">&pi;r&sup2;</span></div>
+    <p class="limit">Cutting and rearranging never changes the area, so this <em>is</em> the circle's area. As the slices get thinner the jagged edges flatten into a perfect rectangle, and the &ldquo;&asymp;&rdquo; becomes &ldquo;=&rdquo;.</p>
+  </section>
+
+  <footer>Drag the slider · press unroll · watch the crust split in half</footer>
+
+<footer class="dz-end"><p>Taken apart, put back together.</p><nav><a href="../index.html">← All lessons</a><a href="circle-area-for-kids-en.html">Kids version</a><a href="circle-area-for-kids.html">中文·儿童</a></nav></footer><style>.dz-end{margin:70px auto 60px;text-align:center;}.dz-end p{font-size:15px;opacity:0.75;margin:0 0 14px;}.dz-end nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}.dz-end a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;font-weight:700;text-decoration:none;color:#201D17;background:#FBF9F3;padding:9px 18px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-end a:hover{transform:translateY(-1px);}</style>
+
+</main>
+
+<script>
+(function(){
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var caption = document.getElementById('caption');
+  var CSSW = 640, CSSH = 340;
+
+  function resize(){
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = CSSW * dpr; cv.height = CSSH * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  var cx = 320, cy = 150, r = 100;
+  var n = 10;
+  var t = 0, target = 0, raf = null;
+
+  var COL = {
+    text:'#1B2436', guide:'#8089A0',
+    aFill:'#7B73DD', aStroke:'rgba(46,42,107,0.30)',
+    bFill:'#27A77E', bStroke:'rgba(15,110,86,0.30)',
+    crust:'#E0892E', crustDeep:'#8A4F0E', side:'#0F6E56'
+  };
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function lerp(a,b,k){ return a + (b-a)*k; }
+  function ease(k){ return k<0.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2; }
+
+  var capCircle = '<span class="dot" style="background:#E0892E"></span>The orange <b>crust</b> is the edge all the way around &mdash; the circumference, <b>2&pi;r</b>. The straight sides are radii of length <b>r</b>.';
+  var capRect = 'Half the <b>crust</b> now lines the top (<b>&pi;r</b>) and half lines the bottom (<b>&pi;r</b>). The straight radius sides became the height (<b>r</b>).';
+  function setCaption(){ caption.innerHTML = (t > 0.5) ? capRect : capCircle; }
+
+  function draw(){
+    ctx.clearRect(0,0,CSSW,CSSH);
+    var te = ease(t);
+    var step = 2*Math.PI/n, half = step/2;
+    var dx = r*Math.sin(half), dy = r*Math.cos(half);
+    var ox = cx - (n-1)*dx/2;
+    var topY = cy - r/2, botY = cy + r/2;
+
+    for (var i=0;i<n;i++){
+      var even = (i%2===0);
+      var bc = (i+0.5)*step;
+      var bu = even ? -Math.PI/2 : Math.PI/2;
+      var apxU = ox + i*dx, apyU = even ? botY : topY;
+      var apx = lerp(cx, apxU, te);
+      var apy = lerp(cy, apyU, te);
+      var bis = lerp(bc, bu, te);
+      var a0 = bis-half, a1 = bis+half;
+
+      ctx.beginPath();
+      ctx.moveTo(apx, apy);
+      ctx.arc(apx, apy, r, a0, a1);
+      ctx.closePath();
+      ctx.fillStyle = even ? COL.aFill : COL.bFill;
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = even ? COL.aStroke : COL.bStroke;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(apx, apy, r, a0, a1);
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = COL.crust;
+      ctx.stroke();
+    }
+
+    ctx.font = '700 15px "Space Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    var aCircle = Math.max(0, 1 - t*2.2);
+    if (aCircle > 0.01){
+      ctx.save();
+      ctx.globalAlpha = aCircle;
+      ctx.strokeStyle = COL.text; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx + r, cy); ctx.stroke();
+      ctx.fillStyle = COL.text;
+      ctx.fillText('r', cx + r/2, cy - 13);
+      ctx.restore();
+    }
+
+    var aRect = Math.max(0, Math.min(1, (t-0.45)/0.5));
+    if (aRect > 0.01){
+      ctx.save();
+      ctx.globalAlpha = aRect;
+      var gy = botY + 30;
+      var leftX = ox, rightX = ox + (n-1)*dx;
+      ctx.strokeStyle = COL.crustDeep; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(leftX, gy); ctx.lineTo(rightX, gy); ctx.stroke();
+      ctx.setLineDash([]);
+      [leftX,rightX].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x, gy-5); ctx.lineTo(x, gy+5); ctx.stroke(); });
+      ctx.fillStyle = COL.crustDeep;
+      ctx.fillText('width \u2248 \u03C0r', (leftX+rightX)/2, gy + 17);
+
+      var gx = rightX + 32;
+      ctx.strokeStyle = COL.side; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(gx, topY); ctx.lineTo(gx, botY); ctx.stroke();
+      ctx.setLineDash([]);
+      [topY,botY].forEach(function(y){ ctx.beginPath(); ctx.moveTo(gx-5, y); ctx.lineTo(gx+5, y); ctx.stroke(); });
+      ctx.fillStyle = COL.side;
+      ctx.save(); ctx.translate(gx + 18, cy); ctx.rotate(-Math.PI/2);
+      ctx.fillText('height = r', 0, 0); ctx.restore();
+      ctx.restore();
+    }
+  }
+
+  function animate(){
+    var d = target - t;
+    if (Math.abs(d) < 0.005){ t = target; draw(); setCaption(); raf = null; return; }
+    t += d * 0.12; draw();
+    raf = requestAnimationFrame(animate);
+  }
+  function go(){
+    setCaption();
+    if (reduce){ t = target; draw(); return; }
+    if (!raf) raf = requestAnimationFrame(animate);
+  }
+
+  document.getElementById('n').addEventListener('input', function(e){
+    n = parseInt(e.target.value,10);
+    document.getElementById('nout').textContent = n + ' pieces';
+    draw();
+  });
+  var btn = document.getElementById('toggle');
+  btn.addEventListener('click', function(){
+    target = target > 0.5 ? 0 : 1;
+    btn.textContent = target > 0.5 ? 'Fold back into circle' : 'Unroll into rectangle';
+    go();
+  });
+
+  window.addEventListener('resize', function(){
+    clearTimeout(window.__rt); window.__rt = setTimeout(resize, 120);
+  });
+  setCaption();
+  resize();
+})();
+</script>
+</body>
+</html>

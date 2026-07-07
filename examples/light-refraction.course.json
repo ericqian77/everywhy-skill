@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "slug": "light-refraction",
+  "topic": "refraction",
+  "title": "筷子插进水里，为什么弯了？",
+  "summary": "把「看见」拆成三个零件：光从筷尖出发、在水面拐弯、眼睛沿直线反推——拼回去，弯筷子自己浮现。",
+  "tag": "physics",
+  "level": "general",
+  "lang": "zh",
+  "accent": "#2778A9",
+  "author": "everywhy",
+  "license": "CC BY-SA 4.0",
+  "prerequisites": null,
+  "age_range": null
+}

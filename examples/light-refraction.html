@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>筷子插进水里，为什么弯了？</title>
+<meta name="description" content="把「看见」拆成三个零件：光从筷尖出发、在水面拐弯（折射）、眼睛沿直线反推（虚像）——再拼回去，弯筷子自己浮现。" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="筷子插进水里，为什么弯了？" />
+<meta property="og:description" content="把「看见」拆成三个零件：光从筷尖出发、在水面拐弯（折射）、眼睛沿直线反推（虚像）——再拼回去，弯筷子自己浮现。" />
+<meta property="og:image" content="https://everywhy.ai/assets/og-default.png" />
+<meta property="og:locale" content="zh_CN" />
+<link rel="alternate" hreflang="zh" href="https://everywhy.ai/pages/light-refraction.html" />
+<link rel="alternate" hreflang="en" href="https://everywhy.ai/pages/light-refraction-en.html" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F7F4EE;          /* 水面之上：暖白 */
+    --bg-card:#FFFEFA;
+    --ink:#1F2D38;
+    --ink-soft:#61707C;
+    --accent:#2778A9;      /* 水 */
+    --accent-deep:#1B5E86;
+    --water-hi:#CFE5F1;
+    --water-lo:#A8CDE2;
+    --amber:#D99A2B;       /* 光 */
+    --amber-deep:#B37B14;
+    --coral:#D26449;       /* 虚像 */
+    --wood:#A9763C;        /* 筷子 */
+    --wood-deep:#7E5527;
+    --ghost:#8FA9BC;       /* 反推的直线 / 实际位置 */
+    --line:#E7E0D2;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans SC', system-ui, sans-serif; line-height:1.85;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .display{ font-family:'Noto Serif SC', serif; font-weight:600; }
+  ::selection{ background:var(--accent); color:#fff; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 22px; }
+
+  /* hero */
+  .hero{ min-height:94vh; display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center; gap:30px; padding-top:60px; }
+  .hero .tag{ display:inline-block; background:#DCEBF4; color:var(--accent-deep); font-weight:700; font-size:13px; letter-spacing:.08em; padding:6px 14px; border-radius:99px; margin-bottom:20px; }
+  h1{ font-family:'Noto Serif SC', serif; font-weight:700; font-size:clamp(32px,6.4vw,56px); line-height:1.24; margin:0 0 18px; }
+  h1 .pop{ color:var(--accent-deep); }
+  .hero p{ font-size:17px; color:var(--ink-soft); max-width:36ch; margin:0 0 26px; }
+  .scrolldown{ display:inline-flex; align-items:center; gap:10px; font-weight:700; color:var(--accent-deep); font-size:15px; }
+  .scrolldown .arrow{ width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; animation:bob 1.5s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(5px);} }
+  .herostage{ display:flex; align-items:center; justify-content:center; }
+  #heroCv{ width:min(270px, 62vw); aspect-ratio:4/5; height:auto; }
+
+  /* scroll-driven sticky stage */
+  .play{ position:relative; height:520vh; }
+  .play-sticky{ position:sticky; top:0; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:0 16px; }
+  #cv{ width:min(430px, 88vw); aspect-ratio:10/9; height:auto; }
+  .play-cap{ font-family:'Noto Serif SC', serif; font-weight:600; font-size:clamp(19px,4vw,24px); line-height:1.5; color:var(--ink); max-width:24ch; min-height:1.5em; transition:opacity .25s ease; }
+  .play-sub{ font-size:14.5px; line-height:1.7; color:var(--ink-soft); max-width:36ch; min-height:3.4em; transition:opacity .25s ease; }
+  .playrow{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .scrollhint{ font-size:13px; color:var(--ink-soft); font-weight:700; letter-spacing:.05em; }
+  .playbtn{
+    font-family:'Noto Sans SC',sans-serif; font-weight:700; font-size:13px; color:#fff;
+    background:var(--accent); border:none; border-radius:99px; padding:7px 16px; cursor:pointer;
+    transition:transform .08s ease, background .15s ease;
+  }
+  .playbtn:hover{ background:var(--accent-deep); }
+  .playbtn:active{ transform:scale(.96); }
+  .playbtn:disabled{ opacity:.65; cursor:default; }
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; justify-content:center; font-size:12.5px; color:var(--ink-soft); }
+  .legend .sw{ display:inline-block; width:14px; height:3px; border-radius:2px; margin-right:6px; vertical-align:3px; }
+  .legend .sw.dash{ background:none; border-top:2px dashed var(--ghost); height:0; }
+  .legend .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--coral); margin-right:6px; vertical-align:-1px; }
+
+  /* recap */
+  .steps{ padding:90px 0 20px; }
+  .steps h2{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(26px,5vw,38px); text-align:center; margin:0 0 12px; }
+  .steps .intro{ text-align:center; color:var(--ink-soft); max-width:32ch; margin:0 auto 46px; }
+  .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:14px; display:grid; grid-template-columns:52px 1fr; gap:18px; align-items:start; }
+  .card .nm{ width:48px; height:48px; border-radius:50%; background:#DCEBF4; color:var(--accent-deep); font-family:'Noto Serif SC',serif; font-weight:700; font-size:20px; display:flex; align-items:center; justify-content:center; }
+  .card h3{ font-family:'Noto Serif SC',serif; font-weight:600; font-size:19px; margin:4px 0 6px; }
+  .card p{ margin:0; color:var(--ink-soft); font-size:15.5px; }
+  .card p b{ color:var(--ink); }
+  .card p .hl{ color:var(--amber-deep); font-weight:700; }
+  .card p .hl2{ color:var(--coral); font-weight:700; }
+
+  .law{ margin:30px 0 0; background:linear-gradient(180deg,#E7F1F8,#FBFDFE); border:1px solid #CBDEEB; border-radius:16px; padding:26px; text-align:center; }
+  .law .big{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(22px,5vw,30px); color:var(--accent-deep); margin-bottom:8px; }
+  .law p{ margin:0 auto; color:var(--ink-soft); max-width:44ch; font-size:15px; }
+  .law p b{ color:var(--ink); }
+
+  /* finale: fish */
+  .finale{ text-align:center; padding:80px 0 20px; }
+  .finale h2{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(24px,5vw,36px); margin:0 0 12px; }
+  .finale .fishstage{ display:flex; justify-content:center; margin:26px 0 18px; }
+  #fishCv{ width:min(460px, 88vw); aspect-ratio:8/5; height:auto; }
+  .finale p{ color:var(--ink-soft); max-width:40ch; margin:0 auto; font-size:16px; }
+  .finale p b{ color:var(--ink); }
+
+  footer{ border-top:1px dashed var(--line); margin-top:70px; padding:24px 0 50px; text-align:center; color:var(--ink-soft); font-size:13px; }
+
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; min-height:auto; padding:96px 0 40px; text-align:center; }
+    .hero p{ margin-left:auto; margin-right:auto; }
+    .herostage{ order:-1; }
+    .scrolldown{ justify-content:center; }
+    .card{ grid-template-columns:42px 1fr; gap:14px; padding:18px; }
+    .card .nm{ width:40px; height:40px; font-size:17px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scrolldown .arrow{ animation:none; }
+    .play-cap,.play-sub{ transition:none; }
+  }
+</style>
+</head>
+<body>
+<a href="../index.html" class="dz-back">← 拆解</a><style>.dz-back{position:fixed;top:16px;left:16px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-back:hover{transform:translateY(-1px);}</style>
+<nav class="dz-alt" aria-label="其他版本"><a href="light-refraction-en.html">EN</a></nav><style>.dz-alt{position:fixed;top:16px;right:16px;z-index:9999;display:flex;gap:6px;}.dz-alt a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-alt a:hover{transform:translateY(-1px);}</style>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="tag">物理 · 光的折射</span>
+      <h1>筷子插进水里，<br>为什么<span class="pop">弯</span>了？</h1>
+      <p>捞出来一看，它明明是直的。弯折不在筷子上——在光走的路上，也在你的眼睛里。往下滚，把「看见」这件事拆开。</p>
+      <div class="scrolldown"><span class="arrow">↓</span>往下滚，拆开看看</div>
+    </div>
+    <div class="herostage">
+      <canvas id="heroCv" aria-label="一杯水，一根筷子斜插进去，水下的部分看起来向上弯折了"></canvas>
+    </div>
+  </section>
+</main>
+
+<section class="play" aria-label="往下滚动，看光从筷尖走到眼睛的完整路径，以及弯筷子如何浮现">
+  <div class="play-sticky">
+    <div class="playrow">
+      <span class="scrollhint">↓ 慢慢往下滚 ↓</span>
+      <button id="playBtn" class="playbtn" type="button">▶ 自动播放</button>
+    </div>
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <div class="play-cap display" id="cap">侧面看：水、筷子，和你的眼睛。</div>
+    <div class="play-sub" id="sub">筷子本身是直的——盯住水下那一截，它现在还是直的。</div>
+    <div class="legend" aria-hidden="true">
+      <span><span class="sw" style="background:var(--amber)"></span>光真正走的路</span>
+      <span><span class="sw dash"></span>大脑反推的直线</span>
+      <span><span class="dot"></span>虚像</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="steps">
+    <h2 class="reveal">回放：我们拆出了哪三个零件？</h2>
+    <p class="intro reveal">「看见一根弯筷子」＝ 光 × 折射 × 虚像。</p>
+
+    <div class="card reveal">
+      <div class="nm">1</div>
+      <div>
+        <h3>看见 ＝ 光进入眼睛</h3>
+        <p>筷尖自己不发光，它把照到它的光<b>反射向四面八方</b>，其中一小束恰好飞进你的眼睛。你看见的从来不是筷子本身，而是这束光。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">2</div>
+      <div>
+        <h3>在水面，光拐了个弯</h3>
+        <p>光在水里的速度只有空气里的约四分之三。跨过水面的一瞬间速度变了，方向也跟着变——这就是<span class="hl">折射</span>。从水进入空气时，光会<b>更偏离法线</b>（法线：垂直于水面的那条假想线，量角度都以它为基准）。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">3</div>
+      <div>
+        <h3>大脑沿直线反推</h3>
+        <p>眼睛只知道光<b>进来时的方向</b>，不知道它半路拐过弯。大脑默认光走直线，沿着这个方向反向延长——延长线交出来的位置，就是<span class="hl2">虚像</span>：那里其实没有光出发，是大脑「脑补」出来的位置，它比真实的筷尖<b>更浅</b>。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">4</div>
+      <div>
+        <h3>拼回去：无数虚像，连成一根弯筷子</h3>
+        <p>水下的每一个点都被「抬高」了一截——<b>浅处抬得少，深处抬得多</b>。把所有虚像点连起来，筷子就在水面处<b>向上一折</b>。弯的不是筷子，是你对每个点位置的判断。</p>
+      </div>
+    </div>
+
+    <div class="law reveal">
+      <div class="big">n₁ sin θ₁ ＝ n₂ sin θ₂</div>
+      <p>这就是折射定律（斯涅尔定律）。水的折射率 n≈<b>1.33</b>，空气 n≈<b>1.00</b>：光从水进空气，sin θ₂ ＝ 1.33 × sin θ₁，所以折射角总比入射角大。顺手一算：从正上方看，水底的东西大约在真实深度的 <b>3/4</b> 处。</p>
+    </div>
+  </section>
+
+  <section class="finale">
+    <h2 class="reveal">所以——叉鱼要往下叉</h2>
+    <div class="fishstage reveal">
+      <canvas id="fishCv" aria-hidden="true"></canvas>
+    </div>
+    <p class="reveal">鱼反射的光同样在水面拐弯：你看到的那条鱼是<b>虚像</b>，真身在它<b>下方更深处</b>。想叉中它，就得瞄准「看到的位置」的下面。渔夫早就凭经验知道这件事——现在你能把它拆开讲清楚了。</p>
+  </section>
+
+  <footer>光的折射 · 拆开来讲 —— 滚回上面那张图，可以再拆一遍</footer>
+
+<footer class="dz-end"><p>光路拼回去了——筷子从来没弯过。</p><nav><a href="../index.html">← 回到目录</a><a href="light-refraction-en.html">English →</a></nav></footer><style>.dz-end{margin:70px auto 60px;text-align:center;}.dz-end p{font-size:15px;opacity:0.75;margin:0 0 14px;}.dz-end nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}.dz-end a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;font-weight:700;text-decoration:none;color:#201D17;background:#FBF9F3;padding:9px 18px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-end a:hover{transform:translateY(-1px);}</style>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var NW = 1.33, NA = 1.0; // 水、空气的折射率
+
+  var C = {
+    ink:'#1F2D38', inkSoft:'#61707C',
+    accent:'#2778A9', accentDeep:'#1B5E86',
+    waterHi:'rgba(167,204,226,0.55)', waterLo:'rgba(140,183,212,0.75)',
+    amber:'#E3A43C', amberDeep:'#B37B14',
+    coral:'#D26449',
+    wood:'#A9763C', woodDeep:'#7E5527', woodWet:'#8C6234',
+    ghost:'#8FA9BC'
+  };
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function ramp(p,a,b){ return clamp((p-a)/(b-a), 0, 1); }
+  function ez(k){ return k<0.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2; }
+  function lerp(a,b,k){ return a+(b-a)*k; }
+  function dist(a,b){ return Math.hypot(b.x-a.x, b.y-a.y); }
+
+  // ---- 物理核心 ----
+  // 费马原理:光从水下 P 到空气中 E,在水面上取哪一点 S 使光程 n_w·|PS| + n_a·|SE| 最短。
+  // 解出来的路径自动满足折射定律 n_w·sinθ1 = n_a·sinθ2(已用数值检验)。
+  function surfaceX(px, py, ex, ey, W){
+    var lo = Math.min(px, ex), hi = Math.max(px, ex);
+    function f(sx){
+      var dw = Math.hypot(sx-px, W-py) || 1e-9;
+      var da = Math.hypot(sx-ex, W-ey) || 1e-9;
+      return NW*(sx-px)/dw + NA*(sx-ex)/da; // 光程对 sx 的导数
+    }
+    var flo = f(lo);
+    for (var i=0;i<60;i++){
+      var m = (lo+hi)/2, fm = f(m);
+      if ((fm>0) === (flo>0)) { lo = m; flo = fm; } else hi = m;
+    }
+    return (lo+hi)/2;
+  }
+  // 虚像:P 发出的一小束光进入瞳孔(上下缘 E±delta),把两条折射后的光线各自反向延长,交点即虚像。
+  function virtualPoint(P, E, W, delta){
+    var lines = [E.y-delta, E.y+delta].map(function(ey){
+      var sx = surfaceX(P.x, P.y, E.x, ey, W);
+      return { x:sx, y:W, dx:sx-E.x, dy:W-ey }; // 视线方向:从眼睛穿过水面点,向水下延伸
+    });
+    var a = lines[0], b = lines[1];
+    var det = a.dx*(-b.dy) - (-b.dx)*a.dy;
+    if (Math.abs(det) < 1e-9) return { x:a.x, y:a.y };
+    var t = ((b.x-a.x)*(-b.dy) + b.dx*(b.y-a.y)) / det;
+    return { x:a.x + t*a.dx, y:a.y + t*a.dy };
+  }
+
+  // ---- 画布工具 ----
+  function fit(cv){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { ctx:ctx, w:r.width, h:r.height };
+  }
+  function arrowHead(ctx, x, y, ang, s, color){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-s,-s*0.55); ctx.lineTo(-s,s*0.55); ctx.closePath();
+    ctx.fillStyle = color; ctx.fill(); ctx.restore();
+  }
+  function partialSeg(ctx, a, b, k){
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(lerp(a.x,b.x,k), lerp(a.y,b.y,k)); ctx.stroke();
+  }
+  function drawEye(ctx, E, s, gazeAng){
+    ctx.save(); ctx.translate(E.x,E.y); ctx.rotate(gazeAng);
+    ctx.beginPath();
+    ctx.moveTo(-s,0); ctx.quadraticCurveTo(0,-s*0.82, s,0); ctx.quadraticCurveTo(0,s*0.82, -s,0); ctx.closePath();
+    ctx.fillStyle = '#FFFEFA'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ink; ctx.stroke();
+    ctx.beginPath(); ctx.arc(s*0.22,0, s*0.42, 0, Math.PI*2); ctx.fillStyle = C.accentDeep; ctx.fill();
+    ctx.beginPath(); ctx.arc(s*0.30,0, s*0.18, 0, Math.PI*2); ctx.fillStyle = C.ink; ctx.fill();
+    ctx.restore();
+  }
+
+  // ================= 主舞台(滚动驱动) =================
+  var cv = document.getElementById('cv');
+  var stage = fit(cv);
+  var lastP = 0;
+
+  function geo(){
+    var w = stage.w, h = stage.h;
+    var W = 0.40*h;
+    var E = { x:0.13*w, y:0.13*h };                    // 眼睛
+    var A = { x:0.80*w, y:0.08*h };                    // 筷子上端
+    var P = { x:0.46*w, y:0.80*h };                    // 筷尖
+    var tM = (W-A.y)/(P.y-A.y);
+    var M = { x:A.x+(P.x-A.x)*tM, y:W };               // 筷子与水面的交点
+    return { w:w, h:h, W:W, E:E, A:A, P:P, M:M, d:0.02*w };
+  }
+
+  function apparentCurve(g, n){
+    var pts = [{ x:g.M.x, y:g.M.y, t:0 }];
+    for (var i=1;i<=n;i++){
+      var t = 0.05 + (i/n)*0.95;
+      var Q = { x:lerp(g.M.x,g.P.x,t), y:lerp(g.M.y,g.P.y,t) };
+      var v = virtualPoint(Q, g.E, g.W, g.d);
+      v.t = t; pts.push(v);
+    }
+    return pts;
+  }
+  function partialPoly(ctx, pts, k){
+    if (k<=0) return;
+    var total = 0, lens = [];
+    for (var i=1;i<pts.length;i++){ var L = dist(pts[i-1],pts[i]); lens.push(L); total += L; }
+    var left = k*total;
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for (var j=1;j<pts.length;j++){
+      var L2 = lens[j-1];
+      if (left >= L2){ ctx.lineTo(pts[j].x, pts[j].y); left -= L2; }
+      else { var kk = left/L2; ctx.lineTo(lerp(pts[j-1].x,pts[j].x,kk), lerp(pts[j-1].y,pts[j].y,kk)); break; }
+    }
+    ctx.stroke();
+  }
+  function stick(ctx, a, b, w1){
+    ctx.lineCap = 'round';
+    ctx.lineWidth = w1+2; ctx.strokeStyle = C.woodDeep;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    ctx.lineWidth = w1; ctx.strokeStyle = C.wood;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+
+  function draw(p){
+    lastP = p;
+    var ctx = stage.ctx, g = geo(), w = g.w, h = g.h;
+    ctx.clearRect(0,0,w,h);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    var fs = Math.max(11, 0.033*w);
+    ctx.font = '500 '+fs+'px "Noto Sans SC", sans-serif';
+
+    // ---- 时间线 ----
+    var fan       = ez(ramp(p, 0.08, 0.22));   // 零件一:光向四面八方
+    var fanFade   = ramp(p, 0.24, 0.30);
+    var ray       = ez(ramp(p, 0.26, 0.42));   // 零件二:主光线 + 折射
+    var geomA     = ramp(p, 0.32, 0.42);       // 法线 + 角度
+    var ext       = ez(ramp(p, 0.46, 0.56));   // 零件三:反向延长
+    var ray2A     = ramp(p, 0.48, 0.56);
+    var vpt       = ramp(p, 0.54, 0.62);       // 虚像点
+    var depthA    = ramp(p, 0.57, 0.63);
+    var constrFade= ramp(p, 0.62, 0.70);       // 收起单点的构造线
+    var scan      = ez(ramp(p, 0.63, 0.82));   // 逐点扫描
+    var asm       = ez(ramp(p, 0.84, 0.97));   // 拼回去
+
+    // ---- 水 ----
+    var grad = ctx.createLinearGradient(0, g.W, 0, h);
+    grad.addColorStop(0, C.waterHi); grad.addColorStop(1, C.waterLo);
+    ctx.fillStyle = grad; ctx.fillRect(0, g.W, w, h-g.W);
+    ctx.beginPath();
+    for (var x=0; x<=w; x+=4){ var yy = g.W + Math.sin(x/w*Math.PI*7)*0.004*h; (x===0)?ctx.moveTo(x,yy):ctx.lineTo(x,yy); }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    ctx.fillStyle = C.inkSoft; ctx.fillText('空气', 0.045*w, g.W - 0.045*h);
+    ctx.fillStyle = C.accentDeep; ctx.fillText('水 (光走得慢)', 0.045*w, g.W + 0.055*h);
+
+    // 主光线的水面折射点、筷尖虚像
+    var sx = surfaceX(g.P.x, g.P.y, g.E.x, g.E.y, g.W);
+    var S  = { x:sx, y:g.W };
+    var Pv = virtualPoint(g.P, g.E, g.W, g.d);
+
+    // ---- 零件一:筷尖把光射向四面八方 ----
+    if (fan > 0 && fanFade < 1){
+      ctx.save(); ctx.globalAlpha = fan*(1-fanFade)*0.9;
+      ctx.lineWidth = 2; ctx.strokeStyle = C.amber; ctx.lineCap='round';
+      var NR = 7;
+      for (var i=0;i<NR;i++){
+        var ang = (-155 + i*(130/(NR-1))) * Math.PI/180;
+        var len = 0.17*w*fan;
+        var bx = g.P.x + Math.cos(ang)*len, by = g.P.y + Math.sin(ang)*len;
+        ctx.beginPath(); ctx.moveTo(g.P.x,g.P.y); ctx.lineTo(bx,by); ctx.stroke();
+        if (fan > 0.6) arrowHead(ctx, lerp(g.P.x,bx,0.75), lerp(g.P.y,by,0.75), ang, 0.016*w, C.amber);
+      }
+      ctx.restore();
+    }
+
+    // ---- 零件二:主光线 P→S→E,在水面拐弯 ----
+    if (ray > 0){
+      var L1 = dist(g.P,S), L2 = dist(S,g.E), K = ray*(L1+L2);
+      var mainA = 1 - constrFade*0.75 - asm*0.13;
+      ctx.save(); ctx.globalAlpha = Math.max(0.12, mainA);
+      ctx.lineWidth = 2.6; ctx.strokeStyle = C.amber; ctx.lineCap='round';
+      if (K <= L1){ partialSeg(ctx, g.P, S, K/L1); }
+      else {
+        ctx.beginPath(); ctx.moveTo(g.P.x,g.P.y); ctx.lineTo(S.x,S.y); ctx.stroke();
+        partialSeg(ctx, S, g.E, (K-L1)/L2);
+      }
+      var a1 = Math.atan2(S.y-g.P.y, S.x-g.P.x);
+      var a2 = Math.atan2(g.E.y-S.y, g.E.x-S.x);
+      if (K > L1*0.6) arrowHead(ctx, lerp(g.P.x,S.x,0.55), lerp(g.P.y,S.y,0.55), a1, 0.018*w, C.amber);
+      if (K > L1+L2*0.6) arrowHead(ctx, lerp(S.x,g.E.x,0.55), lerp(S.y,g.E.y,0.55), a2, 0.018*w, C.amber);
+      // 水面折射点
+      ctx.beginPath(); ctx.arc(S.x,S.y, 3.2, 0, Math.PI*2); ctx.fillStyle = C.amberDeep; ctx.fill();
+      ctx.restore();
+    }
+
+    // ---- 法线 + 入射角/折射角 ----
+    if (geomA > 0){
+      ctx.save(); ctx.globalAlpha = geomA*(1-constrFade);
+      ctx.setLineDash([5,5]); ctx.lineWidth = 1.5; ctx.strokeStyle = C.inkSoft;
+      ctx.beginPath(); ctx.moveTo(S.x, g.W-0.17*h); ctx.lineTo(S.x, g.W+0.15*h); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = C.inkSoft; ctx.fillText('法线', S.x+0.014*w, g.W-0.155*h);
+      var angSP = Math.atan2(g.P.y-S.y, g.P.x-S.x);   // 指向筷尖(右下)
+      var angSE = Math.atan2(g.E.y-S.y, g.E.x-S.x);   // 指向眼睛(左上)
+      ctx.lineWidth = 1.8;
+      // θ1:水中,入射光线与"向下的法线"之间
+      ctx.strokeStyle = C.accentDeep;
+      ctx.beginPath(); ctx.arc(S.x,S.y, 0.062*w, Math.min(angSP,Math.PI/2), Math.max(angSP,Math.PI/2)); ctx.stroke();
+      var m1 = (angSP+Math.PI/2)/2;
+      ctx.fillStyle = C.accentDeep;
+      ctx.fillText('θ₁', S.x+Math.cos(m1)*0.10*w, S.y+Math.sin(m1)*0.10*w);
+      // θ2:空气中,折射光线与"向上的法线"之间(更大 → 更偏离法线)
+      ctx.strokeStyle = C.amberDeep;
+      ctx.beginPath(); ctx.arc(S.x,S.y, 0.078*w, Math.min(angSE,-Math.PI/2), Math.max(angSE,-Math.PI/2)); ctx.stroke();
+      var m2 = (angSE-Math.PI/2)/2;
+      ctx.fillStyle = C.amberDeep;
+      ctx.fillText('θ₂', S.x+Math.cos(m2)*0.125*w - 0.02*w, S.y+Math.sin(m2)*0.125*w);
+      ctx.restore();
+    }
+
+    // ---- 零件三:反向延长 → 虚像 ----
+    if (ext > 0){
+      ctx.save();
+      // 第二条光线(进入瞳孔另一端),淡一些
+      if (ray2A > 0){
+        var E2 = { x:g.E.x, y:g.E.y+g.d };
+        var sx2 = surfaceX(g.P.x, g.P.y, E2.x, E2.y, g.W);
+        var S2 = { x:sx2, y:g.W };
+        ctx.globalAlpha = ray2A*0.4*(1-constrFade);
+        ctx.lineWidth = 1.8; ctx.strokeStyle = C.amber; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(g.P.x,g.P.y); ctx.lineTo(S2.x,S2.y); ctx.lineTo(E2.x,E2.y); ctx.stroke();
+        // 它的反向延长
+        ctx.globalAlpha = ray2A*0.55*(1-constrFade);
+        ctx.setLineDash([6,5]); ctx.strokeStyle = C.ghost;
+        var dir2 = { x:S2.x-E2.x, y:S2.y-E2.y }, n2 = Math.hypot(dir2.x,dir2.y);
+        var len2 = dist(S2,Pv)*1.18;
+        ctx.beginPath(); ctx.moveTo(S2.x,S2.y);
+        ctx.lineTo(S2.x+dir2.x/n2*len2, S2.y+dir2.y/n2*len2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      // 主视线的反向延长:眼睛以为光从这条直线上来
+      ctx.globalAlpha = Math.max(0.15, 1-constrFade*0.6) * ext;
+      ctx.setLineDash([6,5]); ctx.lineWidth = 2; ctx.strokeStyle = C.ghost;
+      var dir = { x:S.x-g.E.x, y:S.y-g.E.y }, nn = Math.hypot(dir.x,dir.y);
+      var len = dist(S,Pv)*1.18*ext;
+      ctx.beginPath(); ctx.moveTo(S.x,S.y); ctx.lineTo(S.x+dir.x/nn*len, S.y+dir.y/nn*len); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+    if (vpt > 0){
+      ctx.save(); ctx.globalAlpha = vpt;
+      ctx.beginPath(); ctx.arc(Pv.x,Pv.y, 5, 0, Math.PI*2); ctx.fillStyle = C.coral; ctx.fill();
+      ctx.beginPath(); ctx.arc(Pv.x,Pv.y, 9, 0, Math.PI*2); ctx.lineWidth=1.5; ctx.strokeStyle = C.coral; ctx.globalAlpha = vpt*0.5; ctx.stroke();
+      ctx.globalAlpha = vpt;
+      ctx.textAlign = 'right'; ctx.fillStyle = C.coral;
+      ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.fillText('虚像', Pv.x-0.032*w, Pv.y-0.012*h);
+      ctx.textAlign = 'left';
+      ctx.font = '500 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.restore();
+    }
+    if (depthA > 0){
+      ctx.save(); ctx.globalAlpha = depthA*(1-constrFade);
+      var ax = g.P.x + 0.075*w;
+      ctx.lineWidth = 1.6; ctx.strokeStyle = C.coral;
+      ctx.beginPath(); ctx.moveTo(ax, g.P.y); ctx.lineTo(ax, Pv.y); ctx.stroke();
+      arrowHead(ctx, ax, Pv.y, -Math.PI/2, 0.016*w, C.coral);
+      ctx.fillStyle = C.coral;
+      ctx.fillText('变浅了', ax+0.016*w, (g.P.y+Pv.y)/2);
+      ctx.restore();
+    }
+
+    // ---- 逐点扫描 + 拼回去 ----
+    var curve = null;
+    if (scan > 0 || asm > 0) curve = apparentCurve(g, 26);
+    if (scan > 0){
+      var u = 0.05 + scan*0.95;
+      // 已经扫出的虚像点轨迹
+      ctx.save(); ctx.globalAlpha = 0.9*(1-asm);
+      ctx.lineWidth = 2.4; ctx.strokeStyle = C.coral; ctx.lineCap='round'; ctx.lineJoin='round';
+      var sub2 = curve.filter(function(q){ return q.t <= u; });
+      if (sub2.length > 1){ ctx.beginPath(); ctx.moveTo(sub2[0].x,sub2[0].y); sub2.forEach(function(q){ ctx.lineTo(q.x,q.y); }); ctx.stroke(); }
+      // 当前扫描点 Q、它的光线和虚像
+      if (asm <= 0 && scan < 1){
+        var Q = { x:lerp(g.M.x,g.P.x,u), y:lerp(g.M.y,g.P.y,u) };
+        var sxq = surfaceX(Q.x,Q.y, g.E.x,g.E.y, g.W);
+        var Sq = { x:sxq, y:g.W };
+        var Qv = virtualPoint(Q, g.E, g.W, g.d);
+        ctx.globalAlpha = 0.65;
+        ctx.lineWidth = 1.8; ctx.strokeStyle = C.amber;
+        ctx.beginPath(); ctx.moveTo(Q.x,Q.y); ctx.lineTo(Sq.x,Sq.y); ctx.lineTo(g.E.x,g.E.y); ctx.stroke();
+        ctx.setLineDash([5,5]); ctx.strokeStyle = C.ghost;
+        ctx.beginPath(); ctx.moveTo(Sq.x,Sq.y); ctx.lineTo(Qv.x,Qv.y); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+        ctx.beginPath(); ctx.arc(Q.x,Q.y, 4, 0, Math.PI*2); ctx.fillStyle = C.woodDeep; ctx.fill();
+        ctx.beginPath(); ctx.arc(Qv.x,Qv.y, 4, 0, Math.PI*2); ctx.fillStyle = C.coral; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ---- 筷子 ----
+    var sw = Math.max(5, 0.017*w);
+    stick(ctx, g.A, g.M, sw); // 水上部分:永远不变
+    if (asm < 1){
+      ctx.save(); ctx.globalAlpha = 1-asm;
+      ctx.lineCap='round';
+      ctx.lineWidth = sw+2; ctx.strokeStyle = C.woodDeep;
+      ctx.beginPath(); ctx.moveTo(g.M.x,g.M.y); ctx.lineTo(g.P.x,g.P.y); ctx.stroke();
+      ctx.lineWidth = sw; ctx.strokeStyle = C.woodWet;
+      ctx.beginPath(); ctx.moveTo(g.M.x,g.M.y); ctx.lineTo(g.P.x,g.P.y); ctx.stroke();
+      ctx.restore();
+    }
+    if (asm > 0){
+      ctx.save();
+      // 实际位置:退成虚线幽灵
+      ctx.globalAlpha = asm;
+      ctx.setLineDash([7,6]); ctx.lineWidth = 2; ctx.strokeStyle = C.ghost;
+      ctx.beginPath(); ctx.moveTo(g.M.x,g.M.y); ctx.lineTo(g.P.x,g.P.y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = C.ghost;
+      ctx.fillText('实际位置', g.P.x+0.025*w, g.P.y+0.02*h);
+      // 你看到的:虚像点连成的弯筷子
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.lineWidth = sw+2; ctx.strokeStyle = C.woodDeep; partialPoly(ctx, curve, asm);
+      ctx.lineWidth = sw;   ctx.strokeStyle = C.wood;     partialPoly(ctx, curve, asm);
+      if (asm > 0.85){
+        ctx.globalAlpha = (asm-0.85)/0.15;
+        ctx.textAlign = 'right'; ctx.fillStyle = C.coral;
+        ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+        ctx.fillText('你看到的', Pv.x-0.03*w, Pv.y+0.045*h);
+        ctx.textAlign = 'left';
+      }
+      ctx.restore();
+    }
+
+    // ---- 眼睛 ----
+    var gaze = Math.atan2(S.y-g.E.y, S.x-g.E.x);
+    drawEye(ctx, g.E, 0.032*w, gaze);
+    ctx.save(); ctx.globalAlpha = 0.85; ctx.fillStyle = C.inkSoft;
+    ctx.textAlign='center';
+    ctx.fillText('眼睛', g.E.x, g.E.y+0.07*h);
+    ctx.restore();
+  }
+
+  // ---- 字幕 ----
+  var cap = document.getElementById('cap');
+  var sub = document.getElementById('sub');
+  var stages = [
+    { p:0.00, c:'侧面看：水、筷子，和你的眼睛。', s:'筷子本身是直的——盯住水下那一截，它现在还是直的。' },
+    { p:0.08, c:'零件一：光。', s:'你能「看见」筷尖，是因为筷尖把照到它的光反射向四面八方。' },
+    { p:0.24, c:'零件二：水面——光在这里拐弯。', s:'光从水进入空气会改变方向，这叫「折射」：出去的角度 θ₂ 比进来的 θ₁ 更偏离法线（垂直于水面的虚线）。' },
+    { p:0.46, c:'零件三：大脑默认光走直线。', s:'沿进入眼睛的方向反向延长（虚线），交点就是大脑以为的筷尖——「虚像」。它比真实筷尖浅。' },
+    { p:0.62, c:'水下每一个点，都来一遍。', s:'每个点的虚像都往上浮了一截——浅处浮得少，深处浮得多。' },
+    { p:0.84, c:'拼回去：弯筷子自己浮现了。', s:'所有虚像点连起来，就是你看到的那根「弯筷子」——真实的筷子，从头到尾都是直的。' }
+  ];
+  var lastIdx = -1;
+  function setStage(p){
+    var idx = 0;
+    for (var i=0;i<stages.length;i++){ if (p >= stages[i].p - 0.0001) idx = i; }
+    if (idx !== lastIdx){
+      lastIdx = idx;
+      if (reduce){
+        cap.textContent = stages[idx].c; sub.textContent = stages[idx].s;
+      } else {
+        cap.style.opacity = 0; sub.style.opacity = 0;
+        setTimeout(function(){ cap.textContent = stages[idx].c; sub.textContent = stages[idx].s; cap.style.opacity = 1; sub.style.opacity = 1; }, 120);
+      }
+    }
+  }
+
+  // ---- 滚动接线 ----
+  var playSec = document.querySelector('.play');
+  var ticking = false;
+  function onScroll(){
+    var rect = playSec.getBoundingClientRect();
+    var total = playSec.offsetHeight - window.innerHeight;
+    var scrolled = clamp(-rect.top, 0, total);
+    var p = total > 0 ? scrolled/total : 0;
+    draw(p);
+    setStage(p);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(onScroll); } }, { passive:true });
+
+  // ---- 自动播放 ----
+  var playBtn = document.getElementById('playBtn');
+  if (reduce){ playBtn.style.display = 'none'; }
+  playBtn.addEventListener('click', function(){
+    var rect = playSec.getBoundingClientRect();
+    var startY = window.scrollY + rect.top + 2;
+    var total = playSec.offsetHeight - window.innerHeight;
+    var endY = startY + total;
+    playBtn.disabled = true; playBtn.textContent = '播放中…';
+    // 逐帧 scrollTo 要用瞬时滚动;CSS 的 scroll-behavior:smooth 会和 rAF 循环打架,导致卡顿甚至看起来没反应
+    var prevScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, startY);
+    var duration = Math.max(8000, Math.min(22000, total * 4)), t0 = null;
+    function step(ts){
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts-t0)/duration);
+      window.scrollTo(0, startY + (endY-startY)*k);
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        playBtn.disabled = false; playBtn.textContent = '↻ 再看一次';
+        document.documentElement.style.scrollBehavior = prevScrollBehavior;
+      }
+    }
+    requestAnimationFrame(step);
+  });
+
+  // ================= 首屏:水杯里的弯筷子 =================
+  var heroCv = document.getElementById('heroCv');
+  var hero = fit(heroCv);
+  function drawHero(t){
+    var ctx = hero.ctx, w = hero.w, h = hero.h;
+    ctx.clearRect(0,0,w,h);
+    var gl = { x0:0.16*w, x1:0.84*w, y0:0.18*h, y1:0.90*h };
+    var WY = 0.42*h;
+    // 水
+    var grad = ctx.createLinearGradient(0, WY, 0, gl.y1);
+    grad.addColorStop(0,'rgba(167,204,226,0.5)'); grad.addColorStop(1,'rgba(140,183,212,0.72)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(gl.x0+3, WY, gl.x1-gl.x0-6, gl.y1-WY-3);
+    // 水面(微微晃动)
+    ctx.beginPath();
+    for (var x=gl.x0+3; x<=gl.x1-3; x+=3){
+      var yy = WY + Math.sin(x/w*9 + t*1.6)*0.006*h;
+      (x===gl.x0+3)?ctx.moveTo(x,yy):ctx.lineTo(x,yy);
+    }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    // 筷子:水上直,水下"看起来"向上折了一点
+    var top = { x:0.94*w, y:0.02*h }, brk = { x:0.47*w, y:WY };
+    var phi = Math.atan2(brk.y-top.y, brk.x-top.x);   // 真实方向(向左下)
+    var phi2 = phi + 0.21;                             // 虚像:朝水面抬起
+    var end = { x:brk.x + Math.cos(phi2)*0.42*h, y:brk.y + Math.sin(phi2)*0.42*h };
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 9; ctx.strokeStyle = C.woodDeep;
+    ctx.beginPath(); ctx.moveTo(brk.x+2,brk.y); ctx.lineTo(end.x,end.y); ctx.stroke();
+    ctx.lineWidth = 7; ctx.strokeStyle = C.wood; ctx.globalAlpha = 0.88;
+    ctx.beginPath(); ctx.moveTo(brk.x+2,brk.y); ctx.lineTo(end.x,end.y); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 8.5; ctx.strokeStyle = C.woodDeep;
+    ctx.beginPath(); ctx.moveTo(top.x,top.y); ctx.lineTo(brk.x,brk.y); ctx.stroke();
+    ctx.lineWidth = 6.5; ctx.strokeStyle = C.wood;
+    ctx.beginPath(); ctx.moveTo(top.x,top.y); ctx.lineTo(brk.x,brk.y); ctx.stroke();
+    // 杯子
+    ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(97,112,124,0.7)'; ctx.lineJoin='round';
+    ctx.beginPath();
+    ctx.moveTo(gl.x0, gl.y0);
+    ctx.lineTo(gl.x0+0.015*w, gl.y1-0.03*h);
+    ctx.quadraticCurveTo(gl.x0+0.02*w, gl.y1, gl.x0+0.09*w, gl.y1);
+    ctx.lineTo(gl.x1-0.09*w, gl.y1);
+    ctx.quadraticCurveTo(gl.x1-0.02*w, gl.y1, gl.x1-0.015*w, gl.y1-0.03*h);
+    ctx.lineTo(gl.x1, gl.y0);
+    ctx.stroke();
+    // 高光
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(gl.x0+0.07*w, WY+0.06*h); ctx.lineTo(gl.x0+0.075*w, gl.y1-0.08*h); ctx.stroke();
+  }
+  if (reduce){ drawHero(0.6); }
+  else {
+    var h0 = null, heroOn = true;
+    function heroLoop(ts){
+      if (!heroOn) return;
+      if (h0===null) h0 = ts;
+      drawHero((ts-h0)/1000);
+      requestAnimationFrame(heroLoop);
+    }
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        var vis = es[0].isIntersecting;
+        if (vis && !heroOn){ heroOn = true; requestAnimationFrame(heroLoop); }
+        if (!vis) heroOn = false;
+      }).observe(heroCv);
+    }
+    requestAnimationFrame(heroLoop);
+  }
+
+  // ================= 结尾:叉鱼(静态图,同一套物理函数算出来) =================
+  var fishCv = document.getElementById('fishCv');
+  var fishS = fit(fishCv);
+  function drawFishShape(ctx, x, y, s, style){
+    ctx.save(); ctx.translate(x,y);
+    ctx.beginPath(); ctx.ellipse(0,0, s, s*0.5, 0, 0, Math.PI*2);
+    ctx.moveTo(s*0.8,0); ctx.lineTo(s*1.5,-s*0.55); ctx.lineTo(s*1.5,s*0.55); ctx.closePath();
+    if (style === 'ghost'){
+      ctx.setLineDash([5,4]); ctx.lineWidth = 2; ctx.strokeStyle = C.coral; ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      ctx.fillStyle = '#3C6E8F'; ctx.fill();
+      ctx.beginPath(); ctx.arc(-s*0.45, -s*0.08, s*0.09, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawFish(){
+    var ctx = fishS.ctx, w = fishS.w, h = fishS.h;
+    ctx.clearRect(0,0,w,h);
+    var W = 0.30*h;
+    var E = { x:0.13*w, y:0.10*h };
+    var R = { x:0.60*w, y:0.75*h };                 // 真鱼
+    var Rv = virtualPoint(R, E, W, 0.012*w);        // 你看到的鱼
+    var sxf = surfaceX(R.x,R.y, E.x,E.y, W);
+    var Sf = { x:sxf, y:W };
+    // 水
+    var grad = ctx.createLinearGradient(0, W, 0, h);
+    grad.addColorStop(0, C.waterHi); grad.addColorStop(1, C.waterLo);
+    ctx.fillStyle = grad; ctx.fillRect(0, W, w, h-W);
+    ctx.beginPath();
+    for (var x=0; x<=w; x+=4){ var yy = W + Math.sin(x/w*Math.PI*9)*0.006*h; (x===0)?ctx.moveTo(x,yy):ctx.lineTo(x,yy); }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    // 光真正走的路:真鱼 → 水面 → 眼睛
+    ctx.lineWidth = 2.2; ctx.strokeStyle = C.amber; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(R.x,R.y); ctx.lineTo(Sf.x,Sf.y); ctx.lineTo(E.x,E.y); ctx.stroke();
+    arrowHead(ctx, lerp(R.x,Sf.x,0.55), lerp(R.y,Sf.y,0.55), Math.atan2(Sf.y-R.y,Sf.x-R.x), 0.014*w, C.amber);
+    arrowHead(ctx, lerp(Sf.x,E.x,0.55), lerp(Sf.y,E.y,0.55), Math.atan2(E.y-Sf.y,E.x-Sf.x), 0.014*w, C.amber);
+    // 大脑反推的直线 → 虚像鱼
+    ctx.setLineDash([6,5]); ctx.lineWidth = 2; ctx.strokeStyle = C.ghost;
+    var dir = { x:Sf.x-E.x, y:Sf.y-E.y }, nn = Math.hypot(dir.x,dir.y);
+    var len = dist(Sf,Rv)*1.12;
+    ctx.beginPath(); ctx.moveTo(Sf.x,Sf.y); ctx.lineTo(Sf.x+dir.x/nn*len, Sf.y+dir.y/nn*len); ctx.stroke();
+    ctx.setLineDash([]);
+    drawFishShape(ctx, Rv.x, Rv.y, 0.052*w, 'ghost');
+    drawFishShape(ctx, R.x, R.y, 0.052*w, 'solid');
+    // 标注
+    var fs = Math.max(11, 0.028*w);
+    ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = C.coral;  ctx.fillText('你看到的鱼(虚像)', Rv.x+0.095*w, Rv.y);
+    ctx.fillStyle = '#2B5A77'; ctx.fillText('真身在这里', R.x+0.095*w, R.y);
+    // 往下叉的箭头
+    ctx.lineWidth = 2; ctx.strokeStyle = C.coral;
+    ctx.beginPath(); ctx.moveTo(Rv.x-0.075*w, Rv.y+0.03*h); ctx.lineTo(R.x-0.075*w, R.y-0.02*h); ctx.stroke();
+    arrowHead(ctx, R.x-0.075*w, R.y-0.02*h, Math.atan2(R.y-0.02*h-(Rv.y+0.03*h), R.x-Rv.x), 0.016*w, C.coral);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = C.coral; ctx.fillText('往下叉', Rv.x-0.09*w, (Rv.y+R.y)/2);
+    drawEye(ctx, E, 0.026*w, Math.atan2(Sf.y-E.y, Sf.x-E.x));
+  }
+  drawFish();
+
+  // ---- 滚动浮现 ----
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, { threshold:0.16 });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // ---- resize ----
+  var rt;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){
+      stage = fit(cv); hero = fit(heroCv); fishS = fit(fishCv);
+      if (reduce) drawHero(0.6);
+      drawFish(); onScroll();
+    }, 150);
+  });
+
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(lastP); drawFish(); }); }
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -28,6 +28,15 @@ node scripts/validate-course.js path/to/your-course.html path/to/your-course.jso
 
 Exits non-zero with a list of errors if the course doesn't meet the format contract. Warnings are non-blocking but worth reading.
 
+Once it's green, submit it — no GitHub account needed:
+
+```
+curl -X POST https://submit.everywhy.ai/v1/courses \
+  -F "html=@your-course.html" -F "meta=@your-course.json"
+```
+
+Accepted submissions open a PR in the public review inbox, [`everywhy-submissions`](https://github.com/ericqian77/everywhy-submissions); a human reviews pedagogical correctness and safety before anything ships to everywhy.ai. See `SKILL.md`'s "Submitting to everywhy.ai" section for the full flow (status polling, rejection format).
+
 ## License
 
 - **Code and instructional text in this repo** (`SKILL.md`, `SPEC.md`, `scripts/`, `templates/`): MIT.

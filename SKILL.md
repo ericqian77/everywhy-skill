@@ -55,6 +55,7 @@ So, before considering the draft done:
 
 Then verify the rest (see SPEC.md §4 for the authoritative list):
 
+- Scroll-driven courses include a visible autoplay/replay control that moves through the whole sticky-stage sequence at a readable pace; manual scrolling still works, and the control is hidden or disabled under `prefers-reduced-motion`
 - Works at 360px width — no horizontal scroll, text readable, animation intact
 - Works with `prefers-reduced-motion` enabled — content still makes sense (scroll-driven pages degrade to step-by-step or a static frame; time-driven animations pause by default or hide their play control)
 - Opens cleanly via `file://` — no console errors, no `fetch`/network dependency
@@ -76,6 +77,24 @@ Your deliverable is exactly two files:
 2. A `course.json` alongside it, matching the schema in SPEC.md §3
 
 See `examples/*.course.json` for three real, validator-passing examples paired with their `.html` files — these are working reference pairs, not just schema illustrations.
+
+## Submitting to everywhy.ai
+
+Once the validator is green, submit directly — no GitHub account needed:
+
+```
+curl -X POST https://submit.everywhy.ai/v1/courses \
+  -F "html=@your-course.html" -F "meta=@your-course.json" \
+  [-F "contact=your-handle-or-email"]
+```
+
+This re-runs the same validator server-side and replies within seconds. A rejected submission (HTTP 422) never leaves a trace anywhere public — fix the listed errors and resubmit. An accepted submission (HTTP 201) returns a `submission_url` (a PR opened automatically in the public review inbox, [`everywhy-submissions`](https://github.com/ericqian77/everywhy-submissions)) and a `status_url` you can poll:
+
+```
+curl https://submit.everywhy.ai/v1/submissions/<id>
+```
+
+`status` is one of `in_review`, `accepted`, or `closed`. Passing the validator only proves format compliance — a human still reviews pedagogical correctness and content safety before anything is published to everywhy.ai. Submitting content is an agreement to license it under CC BY-SA 4.0 (SPEC.md §6).
 
 ## When you're unsure
 

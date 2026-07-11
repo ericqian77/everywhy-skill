@@ -2,9 +2,9 @@
 
 `format_version: 1` · 2026-07-06
 
-本规范与仓库解耦：不引用任何本仓库内部路径，任何 agent harness（Claude Code / Codex / Cursor / 人类）只读本文件即可判断一份课程是否合格。中英双语，两版本内容等价，遇到分歧以中文版为准。
+本规范与仓库解耦：不引用任何本仓库内部路径，任何 agent harness（Claude Code / Codex / Cursor / 人类）只读本文件即可判断一份课程是否合格。中英双语，两版本内容等价，遇到分歧以**英文版**为准（2026-07-11 语言策略修订，此前为中文版为准）。
 
-This spec is decoupled from any single repository — it references no internal paths, and any agent harness (Claude Code, Codex, Cursor, or a human) can judge whether a course is valid by reading only this file. Bilingual, contents equivalent; Chinese governs in case of conflict.
+This spec is decoupled from any single repository — it references no internal paths, and any agent harness (Claude Code, Codex, Cursor, or a human) can judge whether a course is valid by reading only this file. Bilingual, contents equivalent; **English governs** in case of conflict (revised 2026-07-11 per the language policy — previously Chinese governed).
 
 ---
 

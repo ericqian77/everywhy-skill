@@ -1,0 +1,38 @@
+<!-- variant-nav.html — the navigation convention shared by all courses.
+     WHEN TO USE: every course gets dz-back; dz-alt only when sister variants
+     (another language or level) exist; dz-end closes every course.
+
+     Structural conventions (keep): back chip top-left, variant chips top-right,
+     variant labels language-first ("EN", "中文", "中文 · 儿童"), closing footer
+     with a gallery link. Visual styling: restyle freely to fit your course.
+     Links are ABSOLUTE to everywhy.ai except sister files, which sit next to
+     this HTML and use <sibling-slug>.html. -->
+
+<a href="https://everywhy.ai" class="dz-back">← 拆解</a>
+
+<nav class="dz-alt" aria-label="Other versions">
+  <a href="【【sibling-slug.html】】">【【EN / 中文】】</a>
+</nav>
+
+<footer class="dz-end">
+  <p>【【one closing line — don't leave the reader stranded after the aha】】</p>
+  <nav>
+    <a href="https://everywhy.ai">← Back to gallery</a>
+    <a href="【【sibling-slug.html】】">【【variant label】】</a>
+  </nav>
+</footer>
+
+<style>
+  /* Neutral starting point — recolor to fit your page. If the page has a
+     fixed header, set --dz-nav-top (e.g. 60px) on :root to clear it. */
+  .dz-back, .dz-alt a, .dz-end nav a{
+    font-size:12px; font-weight:700; text-decoration:none; color:inherit;
+    background:rgba(255,255,255,.92); padding:7px 14px; border-radius:99px;
+    border:1px solid rgba(0,0,0,.14); box-shadow:0 4px 14px rgba(0,0,0,.10);
+  }
+  .dz-back{ position:fixed; top:var(--dz-nav-top,16px); left:16px; z-index:9999; }
+  .dz-alt{ position:fixed; top:var(--dz-nav-top,16px); right:16px; z-index:9999; display:flex; gap:6px; }
+  .dz-end{ margin:70px auto 60px; text-align:center; }
+  .dz-end p{ font-size:15px; opacity:.75; margin:0 0 14px; }
+  .dz-end nav{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+</style>

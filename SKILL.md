@@ -5,82 +5,84 @@ description: Create an interactive "拆解" (Disassemble) teaching course for ev
 
 # Creating an everywhy.ai course
 
-You are producing one interactive teaching page in the **Disassemble Course Format (DCF)**. Read `SPEC.md` in this same directory first — it defines what makes a submission valid. This file tells you *how* to get there; SPEC.md tells you *what counts*.
+You are producing one interactive teaching page in the **Disassemble Course Format (DCF)**. Read `SPEC.md` in this directory first — it defines what makes a submission valid. This file tells you *how* to get there.
 
-**This is a validated process, not a suggestion.** Every step below exists because skipping it produced a real defect in earlier courses built without it. Follow the order.
+## How this skill constrains you — and how it doesn't
 
-## The five steps
+Everything here falls into three classes. Know which one you're in:
 
-### 1. Design the "aha" moment first, then work backward
+- **Mandatory (M)** — violating these makes the artifact invalid, unsafe, or unreviewable. They live in SPEC.md: verifiable facts independently re-derivable; fully self-contained HTML; accessibility and reduced-motion handling; no outbound requests. Two more live here: **report honestly what you did and didn't verify**, and **never submit or publish unless the user explicitly asked**.
+- **Judgment (J)** — questions you must think through, whose answers this skill deliberately does not prescribe: who the learner is and what they already know; what visible pieces the idea breaks into; how deep the abstraction goes; what the reassembly moment is; whether a misconception is worth addressing.
+- **Recipes (R)** — optional technical patterns in `snippets/`, for mechanics that are easy to get subtly wrong. Load one only when your chosen design needs it.
 
-Before writing anything, answer four questions (the first three are SPEC.md's three-part test):
-- What is the one idea, in one sentence?
-- What visible, animatable pieces does it break into?
-- What is the exact moment the pieces recombine and the idea becomes obvious?
-- **What are the common WRONG explanations of this idea?** Almost every good "why" question has a popular folk answer that's incorrect ("the sky reflects the ocean", "ships float because of air under the hull", "moon phases are Earth's shadow"). List them, and make sure your page explicitly names and refutes at least the most common one — a reader who arrives holding the wrong model needs it dislodged, not just papered over.
+Everything visual and narrative — palette, typography, composition, voice, step count, animation timing — is yours to invent *for this concept*. The files in `examples/` show the **range** of valid quality, not layouts to copy. Two courses on different topics that share a visual skeleton are a failure signal, not compliance.
 
-Design the reassembly moment first. Everything before it exists to set up that moment. If you can't state it in one sentence, you don't understand the idea well enough yet to start building — go back and think, don't start coding.
+## The flow
 
-### 2. If the content involves math, physics, or any checkable fact — derive and verify the numbers on paper before writing any drawing code
+### 1. Preflight
 
-This is the single step most likely to be skipped, and the one that has caught the most real errors in practice. Before you write a line of canvas/SVG code:
+Before designing, answer: What language(s), and how many variants? Who is the learner and what do they already know? Do you have a browser or preview path in this environment? (If not, you can still create — but you must report the verification gap at the end.) Does a course on this topic already exist? (Then you're adding a variant — see Variants below.) Did the user ask you to *create*, or also to *submit*? **Creating never implies submitting.**
 
-- Pick concrete numbers (not abstract variables) wherever the idea allows it. Concrete numbers are what let you (and a later reviewer) actually check the arithmetic.
-- Compute the answer by hand or with a throwaway script — shoelace formula for areas, dot products for perpendicularity, direct substitution for physics formulas (F = ma, Archimedes' principle, Snell's law, whatever applies).
-- Write the verification into a code comment near the constants you derived, so a reviewer can re-check your arithmetic without re-deriving it from scratch.
-- Make sure every geometric ratio or animated position in the final page is *driven by* these verified numbers, not eyeballed to "look about right." An arrow whose length represents a force must be computed from the force value, not drawn at a length that merely looks plausible.
+### 2. Design the understanding change
 
-If you're not fully certain of a construction (e.g. an exact geometric dissection), prefer the simplest version you can verify completely over a more elaborate one you're unsure of. A correct simple animation beats an impressive wrong one.
+Write down, in this order: the one idea, in one sentence; the learner's likely starting model; the visible, animatable pieces the idea breaks into; the exact reassembly moment where the pieces recombine and the idea becomes obvious. Design that moment first, then work backward — everything before it exists to set it up. If you can't state the idea in one sentence, you don't understand it well enough to start building.
 
-### 3. Start from the template
+Then ask: **is there a real, popular wrong explanation of this idea?** ("The sky reflects the ocean", "moon phases are Earth's shadow.") If yes, naming and dislodging it is powerful — a learner holding a wrong model needs it removed, not papered over. If no genuine misconception exists, **don't invent one to fill a section**. That is exactly how template-shaped courses happen.
 
-Copy `templates/lesson-template.html` in this directory. It already has:
-- The self-contained structure (inline CSS/JS, Google Fonts CDN only)
-- `prefers-reduced-motion` handling wired up
-- Canvas resize/DPR handling
-- The navigation scaffolding (`dz-back`, optional `dz-alt` for sister variants, `dz-end` footer)
+### 3. Verify the subject matter — before writing any drawing code
 
-Fill in the `【【...】】` placeholders. Do not introduce a build step, a framework, or a shared CSS/JS file — the page must remain a single file that opens correctly via `file://`.
+The step most often skipped, and the one that has caught the most real errors:
 
-**Visual style is yours to invent.** The template gives you structural conventions, not a visual identity. Every course on this platform has its own color palette, typography, and personality — sameness across courses is a failure mode, not a goal. Look at the three examples in `examples/` for a sense of the *range* of visual styles that are all valid, not a style to copy.
+- Pick concrete numbers wherever the idea allows; concrete numbers are what let a reviewer actually check the arithmetic.
+- Compute the answer by hand or throwaway script — shoelace formula, dot products, direct formula substitution, whatever applies.
+- Leave a short derivation comment near the constants you derived, so a reviewer can re-check without re-deriving.
+- Every geometric ratio or animated position must be *driven by* these verified numbers, not eyeballed.
+- Prefer the simplest construction you can verify completely over an elaborate one you're unsure of.
 
-### 4. Render it and LOOK at it — then walk the checklist
+### 4. Choose the interaction mode
 
-**Correct data does not guarantee correct rendering.** A real bug from a real test run: a set of comparison bars had their widths computed perfectly by JS (the physics ratios were verified and exact), but the bars rendered at 0×0 because the CSS was missing one `display:block` — inline elements ignore `width`. No console error, no validator warning, values all correct in the DOM. The *only* way this class of bug gets caught is by rendering the page and looking at it.
+Match mechanism to concept — the skill prescribes no step count, layout, or duration:
 
-So, before considering the draft done:
+- Discrete transformations and proofs → scroll-driven, stepped, or direct manipulation (see `snippets/scroll-stages.js`).
+- Continuously varying quantities → time-driven animation or a manipulable simulation (see `snippets/time-driven.js`).
+- Comparisons → synchronized states or overlays. Exploration → controls with visible consequences.
+- Canvas, SVG, DOM, CSS, or a mix — whatever the spatial reasoning needs (`snippets/canvas-dpr.js` for canvas).
 
-- **Open the page in a real browser (or take headless-browser screenshots) and visually confirm every visual component actually renders**: every canvas state, every DOM-based chart/meter/bar, every label. For data visualizations, check that the rendered geometry *visibly reflects the data* (four bars representing 1.00/1.95/4.35/6.97 must be four visibly different lengths). If you can inspect computed styles, verify rendered sizes are non-zero and proportional — don't just confirm the JS set the values.
-- **If your environment cannot render a browser at all, say so explicitly in your delivery note** ("not visually verified — needs a human/browser pass") instead of silently skipping. An honestly flagged gap is fine; a silent one ships broken pages.
+### 5. Assemble from the shell
 
-Then verify the rest (see SPEC.md §4 for the authoritative list):
+Copy `templates/lesson-shell.html`. It is a **technical shell** — metadata head, self-containment skeleton, reduced-motion hook, navigation placeholders — and deliberately *not* a design. Fill every `【【…】】` placeholder (the validator blocks on leftovers). Inline and adapt any snippet code you use. Do not introduce a build step, a framework, or a shared CSS/JS file — the page must open correctly via `file://`.
 
-- Scroll-driven courses include a visible autoplay/replay control that moves through the whole sticky-stage sequence at a readable pace; manual scrolling still works, and the control is hidden or disabled under `prefers-reduced-motion`
-- Works at 360px width — no horizontal scroll, text readable, animation intact
-- Works with `prefers-reduced-motion` enabled — content still makes sense (scroll-driven pages degrade to step-by-step or a static frame; time-driven animations pause by default or hide their play control)
-- Opens cleanly via `file://` — no console errors, no `fetch`/network dependency
-- `<title>`, meta description, and the OG trio (`og:title`, `og:description`, `og:image` with an absolute URL) are filled in
-- If this is a sister variant of an existing topic (another language or difficulty level), it links to the existing variant(s) and — critically — you must also add a link *from* the existing variant(s) *to* this new one
-
-### 5. Run the validator until it is green
+### 6. Static validation
 
 ```
-node scripts/validate-course.js <your-file.html> <your-course.json>
+node scripts/validate-course.js <your-course.html> <your-course.json>
 ```
 
-Fix every error it reports. Warnings don't block, but read them — they usually point at something worth fixing anyway. A course is not done until this passes.
+Fix every error. For a variant group, also run:
 
-## Producing the output
+```
+node scripts/validate-variants.js a.html a.json b.html b.json [...]
+```
 
-Your deliverable is exactly two files:
-1. The self-contained HTML page
-2. A `course.json` alongside it, matching the schema in SPEC.md §3
+Green proves *format* compliance only — it is not evidence the course teaches correctly or renders correctly.
 
-See `examples/*.course.json` for three real, validator-passing examples paired with their `.html` files — these are working reference pairs, not just schema illustrations.
+### 7. Render it and LOOK at it
 
-## Submitting to everywhy.ai
+**Correct data does not guarantee correct rendering.** A real bug from a real test run: comparison bars whose widths were computed perfectly by JS rendered at 0×0 because one CSS `display` was missing — no console error, no validator warning. The only way to catch this class of bug is to render the page and look.
 
-Once the validator is green, submit directly — no GitHub account needed:
+Walk the **whole** course, not just the hero: every canvas state, every stage of the scroll sequence, every DOM chart/meter/label, the interactive controls, the ending. Verify rendered geometry visibly reflects the data. Then: 360px width (no horizontal scroll, animation intact); reduced-motion enabled (content still makes sense); `file://` open (no console errors). If your environment cannot render a browser, say so explicitly in your delivery note instead of silently skipping.
+
+### 8. Deliver with evidence
+
+Your final note must state: which artifacts you created; the validator commands and their results; what you rendered and at which viewports/stages; any remaining verification gaps; and that you have **not** submitted anything (unless the user asked you to).
+
+## Variants (bilingual / multi-level)
+
+One variant = one self-contained HTML + one `course.json`. Design the concept and stage structure once; then localize language, examples, and pacing per variant — good variants are re-tellings, not sentence-by-sentence translations. Each variant gets its own `slug` (file named `<slug>.html`); all variants share one `topic`; every variant links to every sibling, both directions. Validate each variant separately, visually accept each separately (shared code does not mean the text fits), then check group consistency with `validate-variants.js`.
+
+## Submitting to everywhy.ai — only when asked
+
+**Validator green ≠ permission to publish. Acceptance in the review inbox ≠ live on the site** — a human curator promotes accepted courses. Submit only when the user explicitly requests it:
 
 ```
 curl -X POST https://submit.everywhy.ai/v1/courses \
@@ -88,14 +90,8 @@ curl -X POST https://submit.everywhy.ai/v1/courses \
   [-F "contact=your-handle-or-email"]
 ```
 
-This re-runs the same validator server-side and replies within seconds. A rejected submission (HTTP 422) never leaves a trace anywhere public — fix the listed errors and resubmit. An accepted submission (HTTP 201) returns a `submission_url` (a PR opened automatically in the public review inbox, [`everywhy-submissions`](https://github.com/ericqian77/everywhy-submissions)) and a `status_url` you can poll:
-
-```
-curl https://submit.everywhy.ai/v1/submissions/<id>
-```
-
-`status` is one of `in_review`, `accepted`, or `closed`. Passing the validator only proves format compliance — a human still reviews pedagogical correctness and content safety before anything is published to everywhy.ai. Submitting content is an agreement to license it under CC BY-SA 4.0 (SPEC.md §6).
+A 422 lists the errors — fix and resubmit; nothing public is created. A 201 returns the inbox PR (`submission_url`) and a `status_url` you can poll (`in_review` / `accepted` / `closed`). Submitting licenses the content under CC BY-SA 4.0 (SPEC.md §6).
 
 ## When you're unsure
 
-If you're not confident a mathematical or physical claim in your draft is correct, say so explicitly in your output rather than presenting it with false confidence. A flagged uncertainty is useful; a confidently wrong animation that teaches something incorrect is the worst possible outcome for this platform.
+If you're not confident a mathematical or physical claim is correct, say so explicitly in your output rather than presenting it with false confidence. A flagged uncertainty is useful; a confidently wrong animation that teaches something incorrect is the worst possible outcome for this platform.

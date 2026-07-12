@@ -47,6 +47,15 @@ if (meta.age_range !== undefined && meta.age_range !== null && typeof meta.age_r
 
 // ---- 2. Hard technical requirements (blocking, see SPEC section 2) ----
 
+// unfilled shell placeholders
+if (/【【|】】/.test(html)) err('unfilled template placeholder (【【…】】) — fill every placeholder from the shell');
+
+// <html lang> vs metadata lang (primary subtag must match)
+const langAttr = (html.match(/<html[^>]*\blang=["']([^"']+)["']/i) || [])[1];
+if (!langAttr) warn('<html> tag has no lang attribute');
+else if (meta.lang && langAttr.toLowerCase().split('-')[0] !== String(meta.lang).toLowerCase())
+  err(`<html lang="${langAttr}"> does not match course.json lang "${meta.lang}"`);
+
 // Fully self-contained: no external <script src> / <link rel=stylesheet href> besides Google Fonts
 const scriptSrcs = [...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)].map(m => m[1]);
 const linkHrefs = [...html.matchAll(/<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["']/gi)].map(m => m[1]);
@@ -75,6 +84,19 @@ DANGEROUS.forEach(([re, label]) => {
 });
 
 // ---- 3. Warnings (non-blocking) ----
+
+// relative references that don't resolve next to the HTML file (broken when
+// the course is distributed standalone — e.g. a leftover ../favicon.svg)
+const baseDir = path.dirname(path.resolve(htmlArg));
+new Set([...html.matchAll(/(?:src|href)=["']([^"']+)["']/gi)]
+  .map(m => m[1])
+  .filter(u => !/^(https?:|mailto:|data:|javascript:|#)/i.test(u))
+).forEach(u => {
+  const clean = u.split(/[?#]/)[0];
+  if (clean && !fs.existsSync(path.resolve(baseDir, clean)))
+    warn(`relative reference "${u}" does not resolve next to the HTML file — broken when distributed standalone`);
+});
+
 if (!/og:image/.test(html)) warn('page is missing an og:image tag');
 if (!/<meta[^>]+name=["']viewport["']/i.test(html)) warn('page is missing a viewport meta tag');
 if (meta.prerequisites === undefined) warn('course.json does not explicitly set prerequisites (optional — prefer null over omitting it)');

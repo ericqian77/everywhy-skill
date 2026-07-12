@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!-- lesson-shell.html — a TECHNICAL shell, deliberately not a design.
+     It gives you: valid metadata, the self-containment skeleton, the
+     reduced-motion hook, navigation placeholders, and canvas/DPR wiring.
+     It gives you NO palette, fonts, composition, or narrative layout —
+     invent those for this concept (see SKILL.md). Fill every 【【…】】
+     placeholder; the validator blocks on leftovers. -->
+<html lang="【【zh-CN or en】】">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>【【title】】</title>
+<meta name="description" content="【【one sentence: which idea this course takes apart】】" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="【【title】】" />
+<meta property="og:description" content="【【same as description】】" />
+<meta property="og:image" content="https://everywhy.ai/assets/og-default.png" />
+<meta property="og:locale" content="【【zh_CN or en_US】】" />
+<!-- Fonts: Google Fonts CDN is the ONLY allowed external dependency (SPEC §2).
+     Pick faces that fit THIS course's character, or delete and use system fonts:
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=【【your choice】】&display=swap" rel="stylesheet" />
+-->
+<style>
+  /* This course's own visual system — self-consistent, not uniform with anything else. */
+  :root{
+    --accent:【【theme color, same value as course.json "accent"】】;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; line-height:1.7; }
+  canvas, img, svg{ max-width:100%; height:auto; }
+
+  /* Navigation chips (structural convention: back top-left, sister-variant top-right).
+     Restyle freely; keep the positions. If the page has its own fixed header,
+     set --dz-nav-top to clear it. */
+  .dz-back, .dz-alt a{
+    position:fixed; top:var(--dz-nav-top,16px); z-index:9999;
+    font-size:12px; font-weight:700; text-decoration:none;
+    padding:7px 14px; border-radius:99px;
+    color:inherit; background:rgba(255,255,255,.92);
+    border:1px solid rgba(0,0,0,.14); box-shadow:0 4px 14px rgba(0,0,0,.10);
+  }
+  .dz-back{ left:16px; }
+  .dz-alt{ position:fixed; top:var(--dz-nav-top,16px); right:16px; z-index:9999; display:flex; gap:6px; }
+  .dz-alt a{ position:static; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    /* Hide autoplay controls here; degrade scroll-driven stages to stepped/static. */
+  }
+</style>
+</head>
+<body>
+
+<a href="https://everywhy.ai" class="dz-back">← 【【拆解 / All courses】】</a>
+
+<!-- Keep only if sister variants exist (another language/level); one link per
+     variant, label = language first (e.g. "EN", "中文", "中文 · 儿童").
+     Delete the whole nav if this course has no variants. -->
+<nav class="dz-alt" aria-label="Other versions"><a href="【【sibling-slug.html】】">【【EN / 中文】】</a></nav>
+
+<main>
+  <h1>【【title】】</h1>
+  <p>【【opening: hook the reader with a question or a counterintuitive fact】】</p>
+
+  <!-- Informational text lives in the DOM, never painted into canvas.
+       Decorative canvases get aria-hidden="true"; informational graphics
+       get a real aria-label instead. -->
+  <canvas id="cv" aria-hidden="true"></canvas>
+
+  <p>【【body and animation advance together】】</p>
+
+  <footer class="dz-end">
+    <p>【【one closing line】】</p>
+    <nav><a href="https://everywhy.ai">← 【【回到目录 / Back to gallery】】</a></nav>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Canvas + devicePixelRatio wiring (from snippets/canvas-dpr.js).
+     For scroll-driven stages or timed autoplay, inline and adapt
+     snippets/scroll-stages.js; for continuous animation with a pause
+     control, snippets/time-driven.js. */
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    var w = cv.clientWidth, h = cv.clientHeight || w;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw(0);
+  }
+  window.addEventListener('resize', resize);
+
+  function draw(t){
+    var w = cv.clientWidth, h = cv.clientHeight || w;
+    ctx.clearRect(0, 0, w, h);
+    /* 【【this course's drawing logic; draw a meaningful static frame when reduceMotion is true】】 */
+  }
+
+  resize();
+})();
+</script>
+</body>
+</html>

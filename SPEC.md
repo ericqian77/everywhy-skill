@@ -38,8 +38,8 @@ Every course MUST satisfy all of the following:
 5. **可访问性 / Accessibility** —— 装饰性 canvas 加 `aria-hidden="true"`；正文文字放在 DOM 里，不画进 canvas。
 6. **教学内容必须正确 / Pedagogical correctness is non-negotiable** —— 涉及数学/物理/其他可验证事实的部分，必须能被独立复算验证（坐标可用鞋带公式/几何关系重新推导，物理量可用公式重新代入）。仅靠生成者自查不构成合格证明。
    Any math/physics/verifiable-fact content must be independently re-derivable (coordinates via shoelace/geometric relations, physical quantities via formula substitution). Self-check by the author alone does not constitute proof of correctness.
-7. **自动播放路径 / Autoplay path** —— 滚动驱动课程必须保留手动滚动，同时提供一个可见的自动播放/再看一次控件，能以可读节奏带读者走完整个 sticky-stage 序列；`prefers-reduced-motion` 下应隐藏或禁用这个控件。
-   Scroll-driven courses must keep manual scrolling and also provide a visible autoplay/replay control that moves through the full sticky-stage sequence at a readable pace; hide or disable that control under `prefers-reduced-motion`.
+7. **自动播放路径 / Autoplay path** —— 滚动驱动课程必须提供一个可见的自动播放/再看一次控件，并满足以下**结果要求**（停靠点数量、时长、缓动机制均由课程自行决定）：每一个预定教学状态都能到达；节奏留足阅读与观察时间；播放结束时最终状态已完整呈现；可以重放；手动滚动始终可用；`prefers-reduced-motion` 下隐藏或禁用该控件。
+   Scroll-driven courses must provide a visible autoplay/replay control meeting these **outcome requirements** (stop count, timing, and mechanism are the course's own choice): every intended teaching state is reachable; the pace leaves enough time to read and observe; the final state is fully rendered before playback ends; it can be replayed; manual scrolling always keeps working; the control is hidden or disabled under `prefers-reduced-motion`.
 
 ---
 
@@ -133,3 +133,4 @@ Content displayed on this platform defaults to **CC BY-SA 4.0**. Submitting cont
 - **v1**（2026-07-06）：首个版本，从单一仓库的 `authoring.md` + `validate-content.js` 抽取、解耦、版本化。
 - **v1 清单补充**（2026-07-07）：检查清单新增「每个视觉组件在真实渲染中亲眼确认」条目——来自首轮外部实测：一处数据正确但因 CSS `display` 缺失渲染为 0×0 的比例条，任何自动校验都无法发现，只有看渲染结果才能发现。schema 无变化，版本号不变。
 - **v1 清单补充**（2026-07-07）：滚动驱动课程新增自动播放/再看一次控件要求，避免课程只能靠手动滚动才能看完整序列。schema 无变化，版本号不变。
+- **v1 措辞修订**（2026-07-11）：自动播放条款改写为结果要求（状态可达/节奏可读/可重放/手动保留/reduced-motion），不再暗示任何停靠点数量或实现机制。契约无变化，版本号不变。

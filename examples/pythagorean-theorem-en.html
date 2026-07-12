@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why 3-4-5? — See the Pythagorean theorem, no algebra required</title>
+<meta name="description" content="Four identical right triangles inside one big square. Slide three of them and the hole in the middle turns from c² into a² + b² — the Pythagorean theorem appears on its own, nothing to memorize." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Why 3-4-5? — See the Pythagorean theorem, no algebra required" />
+<meta property="og:description" content="Four identical right triangles inside one big square. Slide three of them and the hole in the middle turns from c² into a² + b² — the Pythagorean theorem appears on its own, nothing to memorize." />
+<meta property="og:image" content="https://everywhy.ai/assets/og/pythagorean-theorem-en.png" />
+<meta property="og:locale" content="en_US" />
+<link rel="alternate" hreflang="zh" href="https://everywhy.ai/pages/pythagorean-theorem.html" />
+<link rel="alternate" hreflang="en" href="https://everywhy.ai/pages/pythagorean-theorem-en.html" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,600;0,700;1,600;1,700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F6F2E9;          /* rice-paper ground */
+    --bg-card:#FDFBF5;
+    --ink:#26302B;
+    --ink-soft:#6A7570;
+    --accent:#2C9678;      /* jade: the hole (the theorem itself) */
+    --jade-deep:#1E7A5F;
+    --jade-soft:#DCEFE6;
+    --clay:#C9703F;        /* terracotta: the triangles */
+    --clay-deep:#96491F;
+    --clay-soft:#F6E3D3;
+    --line:#E5DECB;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans', system-ui, sans-serif; line-height:1.7;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .display{ font-family:'Noto Serif', serif; font-weight:600; }
+  ::selection{ background:var(--accent); color:#fff; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 22px; }
+
+  /* hero */
+  .hero{ min-height:94vh; display:grid; grid-template-columns:1.05fr 0.95fr; align-items:center; gap:30px; padding-top:60px; }
+  .hero .tag{ display:inline-block; background:var(--jade-soft); color:var(--jade-deep); font-weight:700; font-size:13px; letter-spacing:.08em; padding:6px 14px; border-radius:99px; margin-bottom:20px; }
+  h1{ font-family:'Noto Serif', serif; font-weight:700; font-size:clamp(32px,6.4vw,56px); line-height:1.18; margin:0 0 18px; }
+  h1 .pop{ color:var(--jade-deep); }
+  .hero p{ font-size:17px; color:var(--ink-soft); max-width:42ch; margin:0 0 26px; }
+  .scrolldown{ display:inline-flex; align-items:center; gap:10px; font-weight:700; color:var(--jade-deep); font-size:15px; }
+  .scrolldown .arrow{ width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; animation:bob 1.5s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(5px);} }
+  .herostage{ display:flex; align-items:center; justify-content:center; }
+  #heroCv{ width:min(300px, 66vw); aspect-ratio:116/106; height:auto; }
+
+  /* scroll-driven sticky stage */
+  .play{ position:relative; height:600vh; }
+  .play-sticky{ position:sticky; top:0; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:0 16px; }
+  #cv{ width:min(400px, 88vw, 52vh); aspect-ratio:1; height:auto; }
+  .play-cap{ font-family:'Noto Serif', serif; font-weight:600; font-size:clamp(19px,4vw,24px); line-height:1.4; color:var(--ink); max-width:32ch; min-height:1.5em; transition:opacity .25s ease; }
+  .play-sub{ font-size:14.5px; line-height:1.6; color:var(--ink-soft); max-width:52ch; min-height:3.4em; transition:opacity .25s ease; }
+  .playrow{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .scrollhint{ font-size:13px; color:var(--ink-soft); font-weight:700; letter-spacing:.05em; }
+  .playbtn{
+    font-family:'Noto Sans',sans-serif; font-weight:700; font-size:13px; color:#fff;
+    background:var(--accent); border:none; border-radius:99px; padding:7px 16px; cursor:pointer;
+    transition:transform .08s ease, background .15s ease;
+  }
+  .playbtn:hover{ background:var(--jade-deep); }
+  .playbtn:active{ transform:scale(.96); }
+  .playbtn:disabled{ opacity:.65; cursor:default; }
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; justify-content:center; font-size:12.5px; color:var(--ink-soft); }
+  .legend .sw{ display:inline-block; width:13px; height:13px; border-radius:3px; margin-right:6px; vertical-align:-2px; }
+
+  /* recap */
+  .steps{ padding:90px 0 20px; }
+  .steps h2{ font-family:'Noto Serif',serif; font-weight:700; font-size:clamp(26px,5vw,38px); text-align:center; margin:0 0 12px; }
+  .steps .intro{ text-align:center; color:var(--ink-soft); max-width:44ch; margin:0 auto 46px; }
+  .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:14px; display:grid; grid-template-columns:52px 1fr; gap:18px; align-items:start; }
+  .card .nm{ width:48px; height:48px; border-radius:50%; background:var(--jade-soft); color:var(--jade-deep); font-family:'Noto Serif',serif; font-weight:700; font-size:20px; display:flex; align-items:center; justify-content:center; }
+  .card h3{ font-family:'Noto Serif',serif; font-weight:600; font-size:19px; margin:4px 0 6px; }
+  .card p{ margin:0; color:var(--ink-soft); font-size:15.5px; }
+  .card p b{ color:var(--ink); }
+  .card p .hl{ color:var(--clay-deep); font-weight:700; }
+  .card p .hl2{ color:var(--jade-deep); font-weight:700; }
+
+  .law{ margin:30px 0 0; background:linear-gradient(180deg,#E4F2EB,#FBFDFC); border:1px solid #C4DFD2; border-radius:16px; padding:26px; text-align:center; }
+  .law .big{ font-family:'Noto Serif',serif; font-weight:700; font-size:clamp(24px,5.5vw,34px); color:var(--jade-deep); margin-bottom:8px; }
+  .law p{ margin:0 auto; color:var(--ink-soft); max-width:54ch; font-size:15px; }
+  .law p b{ color:var(--ink); }
+
+  /* finale: rope right angle */
+  .finale{ text-align:center; padding:80px 0 20px; }
+  .finale h2{ font-family:'Noto Serif',serif; font-weight:700; font-size:clamp(24px,5vw,36px); margin:0 0 12px; }
+  .finale .ropestage{ display:flex; justify-content:center; margin:26px 0 18px; }
+  #ropeCv{ width:min(460px, 88vw); aspect-ratio:8/5; height:auto; }
+  .finale p{ color:var(--ink-soft); max-width:48ch; margin:0 auto; font-size:16px; }
+  .finale p b{ color:var(--ink); }
+
+  footer{ border-top:1px dashed var(--line); margin-top:70px; padding:24px 0 50px; text-align:center; color:var(--ink-soft); font-size:13px; }
+
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; min-height:auto; padding:96px 0 40px; text-align:center; }
+    .hero p{ margin-left:auto; margin-right:auto; }
+    .herostage{ order:-1; }
+    .scrolldown{ justify-content:center; }
+    .card{ grid-template-columns:42px 1fr; gap:14px; padding:18px; }
+    .card .nm{ width:40px; height:40px; font-size:17px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scrolldown .arrow{ animation:none; }
+    .play-cap,.play-sub{ transition:none; }
+  }
+</style>
+</head>
+<body>
+<a href="../index.html" class="dz-back">← 拆解 Disassemble</a><style>.dz-back{position:fixed;top:16px;left:16px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-back:hover{transform:translateY(-1px);}</style>
+<nav class="dz-alt" aria-label="Other versions"><a href="pythagorean-theorem.html">中文</a></nav><style>.dz-alt{position:fixed;top:16px;right:16px;z-index:9999;display:flex;gap:6px;}.dz-alt a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-alt a:hover{transform:translateY(-1px);}</style>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="tag">GEOMETRY · PYTHAGOREAN THEOREM</span>
+      <h1>Why does<br><span class="pop">3-4-5</span> work?</h1>
+      <p>3² + 4² comes out to exactly 5² — no more, no less. That's not a coincidence, and you don't have to take it on faith: four triangles sliding around inside one square frame will show you, with your own eyes, why it has to be true.</p>
+      <div class="scrolldown"><span class="arrow">↓</span>Scroll down and take it apart</div>
+    </div>
+    <div class="herostage">
+      <canvas id="heroCv" aria-label="A right triangle with legs 3 and 4, with a square standing on each side: areas 9 and 16, and the unknown c² on the hypotenuse"></canvas>
+    </div>
+  </section>
+</main>
+
+<section class="play" aria-label="Scroll down: four congruent right triangles rearrange inside the same big square, and the hole in the middle changes from c² to a² + b²">
+  <div class="play-sticky">
+    <div class="playrow">
+      <span class="scrollhint">↓ Scroll slowly ↓</span>
+      <button id="playBtn" class="playbtn" type="button">▶ Autoplay</button>
+    </div>
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <div class="play-cap display" id="cap">A right triangle.</div>
+    <div class="play-sub" id="sub">Two legs: 3 and 4. The longest side is the hypotenuse — call it c. So what is c, exactly?</div>
+    <div class="legend" aria-hidden="true">
+      <span><span class="sw" style="background:var(--clay)"></span>Four congruent right triangles</span>
+      <span><span class="sw" style="background:var(--jade-soft);border:1.5px solid var(--accent)"></span>The leftover hole — its area never changes</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="steps">
+    <h2 class="reveal">Replay: the whole proof in four steps</h2>
+    <p class="intro reveal">The props never change: one big frame, four identical triangles.</p>
+
+    <div class="card reveal">
+      <div class="nm">1</div>
+      <div>
+        <h3>Four congruent right triangles</h3>
+        <p>Legs <b>a=3 and b=4</b>, hypotenuse c. Each triangle has area ½ab = 6, so the four together cover <b>24</b>. Add one big square of side <b>a+b=7</b>, area <b>49</b>. That's every prop we'll use.</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">2</div>
+      <div>
+        <h3>Arrangement one: the hole is c²</h3>
+        <p>The four right angles tuck into the frame's four corners, and the four hypotenuses fence off a hole in the middle. Every side of the hole is a hypotenuse, length <b>c</b>; wherever the hole touches the frame, the two acute angles of neighboring triangles meet — and since they're the complementary pair from a single right triangle, they add up to exactly 90°, so the angle left for the hole is exactly 90° too. The hole is a <span class="hl2">square of side c</span>, area c². Check the numbers: 49 − 24 = <b>25</b>.</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">3</div>
+      <div>
+        <h3>Arrangement two: the hole is a² + b²</h3>
+        <p>Keep the frame where it is and <span class="hl">slide</span> three of the triangles over (no rotation needed). They pair up into a×b rectangles tucked into two opposite corners, and the leftover space becomes two squares, <b>b×b</b> and <b>a×a</b>: 16 + 9 = <b>25</b>.</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">4</div>
+      <div>
+        <h3>Put it back together: the two holes must be equal</h3>
+        <p>Same big frame, minus the same four triangles — however you arrange them, what's left over is 49 − 24. So <b>c² = a² + b²</b>. And nothing depended on "3" and "4": take any right triangle, swap in its a and b, and the same two arrangements work just as well.</p>
+      </div>
+    </div>
+
+    <div class="law reveal">
+      <div class="big">a² + b² ＝ c²</div>
+      <p>That's the Pythagorean theorem. Whole-number combinations that satisfy it are called <b>Pythagorean triples</b>: 3-4-5, 5-12-13, 8-15-17… The 3-4-5 triangle is the smallest — the ancient Chinese text <i>Zhoubi Suanjing</i> recorded exactly this triple ("gou 3, gu 4, xian 5") centuries before Euclid.</p>
+    </div>
+  </section>
+
+  <section class="finale">
+    <h2 class="reveal">So — a plain rope can build you a right angle</h2>
+    <div class="ropestage reveal">
+      <canvas id="ropeCv" aria-hidden="true"></canvas>
+    </div>
+    <p class="reveal">Tie <b>12 evenly spaced knots</b> in a rope, pull it into a triangle with sides 3, 4, and 5, and the corner facing the 5 is a perfect right angle. Legend has it Egyptian rope-stretchers used exactly this trick to lay out the pyramids. Now you know why it works: <b>3² + 4² = 5²</b>.</p>
+  </section>
+
+  <footer>Pythagorean theorem · taken apart — scroll back up to run the proof again</footer>
+
+<footer class="dz-end"><p>The hole is still the same hole — a² + b² snapped back into c².</p><nav><a href="../index.html">← Back to the gallery</a><a href="pythagorean-theorem.html">中文版 →</a></nav></footer><style>.dz-end{margin:70px auto 60px;text-align:center;}.dz-end p{font-size:15px;opacity:0.75;margin:0 0 14px;}.dz-end nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}.dz-end a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;font-weight:700;text-decoration:none;color:#201D17;background:#FBF9F3;padding:9px 18px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-end a:hover{transform:translateY(-1px);}</style>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var C = {
+    ink:'#26302B', inkSoft:'#6A7570',
+    jade:'#2C9678', jadeDeep:'#1E7A5F', jadeSoft:'#DCEFE6',
+    clays:['#C9703F','#D28154','#BC6434','#D9926B'],
+    clayDeep:'#96491F',
+    frame:'#4A5650'
+  };
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function ramp(p,a,b){ return clamp((p-a)/(b-a), 0, 1); }
+  function ez(k){ return k<0.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2; }
+  function lerp(a,b,k){ return a+(b-a)*k; }
+
+  function fit(cv){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { ctx:ctx, w:r.width, h:r.height };
+  }
+
+  // ================= Main stage (scroll-driven) =================
+  // Coordinate system: the canvas is 9×9 units; the big square spans (1,1)–(8,8), side 7 = 3+4.
+  // Triangle "local coordinates": right-angle vertex at the origin, legs along (3,0) and (0,4).
+  // World coords = translate by pos + rotate by deg (y points down, positive = clockwise).
+  //
+  // [Geometry self-check, numerically verified (shoelace)] a=3, b=4, c=5; big square 7×7=49; four triangles 4×6=24.
+  // Arrangement one (right angles in the four corners):
+  //   T1 (1,1) 0°   → vertices (0,0)(3,0)(0,4) + frame offset
+  //   T2 (8,1) 90°  → (7,0)(7,3)(3,0)
+  //   T3 (8,8) 180° → (7,7)(4,7)(7,3)
+  //   T4 (1,8) -90° → (0,7)(0,4)(4,7)
+  //   Center hole = (3,0)(7,3)(4,7)(0,4): all four sides are 5 (hypotenuses), adjacent sides have
+  //   zero dot product (right angles) → square of side c, area 49−24=25=c².
+  // Arrangement two (pure translation: T1 +(4,0), T2 +(−3,4), T3 +(0,−3), T4 fixed):
+  //   T1'(4,0)(7,0)(4,4) with T3'(7,4)(4,4)(7,0) form the top-right 3×4 rectangle;
+  //   T2'(4,4)(4,7)(0,4) with T4 form the bottom-left 4×3 rectangle;
+  //   what remains is b²=16 at (0,0)–(4,4) and a²=9 at (4,4)–(7,7), 16+9=25. Equal holes → c²=a²+b².
+  // Slide order T2→T1→T3 was verified frame-by-frame: the four triangle interiors never overlap.
+  var LOCAL = [[0,0],[3,0],[0,4]];
+  var TRIS = [
+    { sc:[1.2,0.9], A:[1,1], deg:0,   d:[4,0],  win:[0.56,0.66], fly:[0.18,0.26] },
+    { sc:[5.3,0.9], A:[8,1], deg:90,  d:[-3,4], win:[0.46,0.56], fly:[0.21,0.29] },
+    { sc:[5.3,5.0], A:[8,8], deg:180, d:[0,-3], win:[0.66,0.76], fly:[0.24,0.32] },
+    { sc:[1.2,5.0], A:[1,8], deg:-90, d:[0,0],  win:null,        fly:[0.27,0.35] }
+  ];
+  var HOLE_A = [[4,1],[8,4],[5,8],[1,5]]; // arrangement-one hole (canvas units)
+
+  var cv = document.getElementById('cv');
+  var stage = fit(cv);
+  var lastP = 0;
+
+  function triVerts(T, p, u){
+    var f = ez(ramp(p, T.fly[0], T.fly[1]));
+    var px = lerp(T.sc[0], T.A[0], f), py = lerp(T.sc[1], T.A[1], f);
+    var deg = lerp(0, T.deg, f);
+    var scale = lerp(0.85, 1, f);
+    if (T.win){
+      var s = ez(ramp(p, T.win[0], T.win[1]));
+      px += T.d[0]*s; py += T.d[1]*s;
+    }
+    var th = deg*Math.PI/180, cs = Math.cos(th), sn = Math.sin(th);
+    return LOCAL.map(function(v){
+      var x = v[0]*scale, y = v[1]*scale;
+      return [ (px + x*cs - y*sn)*u, (py + x*sn + y*cs)*u ];
+    });
+  }
+
+  function draw(p){
+    lastP = p;
+    var ctx = stage.ctx, S = stage.w, u = S/9;
+    ctx.clearRect(0,0,S,S);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var fs = Math.max(11, 0.036*S);
+    var serif = '"Noto Serif", serif', sans = '"Noto Sans", sans-serif';
+
+    // ---- timeline ----
+    var copies  = function(i){ return i===0 ? 1 : ramp(p, 0.06+0.02*i, 0.11+0.02*i); };
+    var introLab= 1 - ramp(p, 0.13, 0.17);        // 3/4/c labels on the first triangle
+    var frameA  = ez(ramp(p, 0.15, 0.21));        // big frame + jade underlay (the hole's color)
+    var holeA   = ramp(p, 0.36, 0.42) * (1 - ramp(p, 0.44, 0.49)); // c, c² labels
+    var ticksA  = ramp(p, 0.32, 0.38) * (1 - ramp(p, 0.44, 0.49)); // top-edge 3|4 ticks
+    var holeB   = ramp(p, 0.78, 0.84);            // 4², 3² labels
+    var eqB     = ramp(p, 0.88, 0.94);            // wrap-up: outline the two square holes
+    // ---- big frame with hole-colored underlay (triangles sit on top; what shows through is the hole) ----
+    if (frameA > 0){
+      ctx.save(); ctx.globalAlpha = frameA;
+      ctx.fillStyle = C.jadeSoft;
+      ctx.fillRect(u, u, 7*u, 7*u);
+      ctx.lineWidth = Math.max(2, 0.008*S); ctx.strokeStyle = C.frame;
+      ctx.strokeRect(u, u, 7*u, 7*u);
+      ctx.restore();
+    }
+
+    // ---- the four triangles ----
+    var verts = [];
+    for (var i=0;i<4;i++){
+      var a = copies(i);
+      if (a <= 0){ verts.push(null); continue; }
+      var vs = triVerts(TRIS[i], p, u);
+      verts.push(vs);
+      ctx.save(); ctx.globalAlpha = a;
+      ctx.beginPath();
+      ctx.moveTo(vs[0][0], vs[0][1]); ctx.lineTo(vs[1][0], vs[1][1]); ctx.lineTo(vs[2][0], vs[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = C.clays[i]; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(150,73,31,0.55)'; ctx.lineJoin = 'round'; ctx.stroke();
+      // number tag (graphic annotation)
+      var gx = (vs[0][0]+vs[1][0]+vs[2][0])/3, gy = (vs[0][1]+vs[1][1]+vs[2][1])/3;
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.font = '700 '+(0.042*S)+'px '+sans;
+      ctx.fillText(String(i+1), gx, gy);
+      ctx.restore();
+    }
+
+    // ---- opening: side labels on the first triangle ----
+    if (introLab > 0 && verts[0]){
+      var v = verts[0];
+      ctx.save(); ctx.globalAlpha = introLab;
+      ctx.font = '700 '+fs+'px '+sans;
+      ctx.fillStyle = C.clayDeep;
+      ctx.fillText('3', (v[0][0]+v[1][0])/2, v[0][1]-0.34*u);                // top leg
+      ctx.fillText('4', v[0][0]-0.32*u, (v[0][1]+v[2][1])/2);                // left leg
+      var mx=(v[1][0]+v[2][0])/2, my=(v[1][1]+v[2][1])/2;                    // hypotenuse midpoint, outward normal (4,3)/5
+      ctx.font = '700 italic '+fs+'px '+serif;
+      ctx.fillStyle = C.jadeDeep;
+      ctx.fillText('c = ?', mx+0.72*u, my+0.54*u);
+      ctx.restore();
+    }
+
+    // ---- arrangement one: top-edge 3|4 ticks ----
+    if (ticksA > 0){
+      ctx.save(); ctx.globalAlpha = ticksA;
+      ctx.font = '700 '+fs+'px '+sans; ctx.fillStyle = C.inkSoft;
+      ctx.fillText('3', 2.5*u, 0.55*u);
+      ctx.fillText('4', 6*u, 0.55*u);
+      ctx.lineWidth = 1.5; ctx.strokeStyle = C.inkSoft;
+      ctx.beginPath(); ctx.moveTo(4*u, 0.78*u); ctx.lineTo(4*u, 1*u); ctx.stroke();
+      ctx.restore();
+    }
+
+    // ---- arrangement one: hole labels (all four sides are c; corners are right angles; area c²) ----
+    if (holeA > 0){
+      ctx.save(); ctx.globalAlpha = holeA;
+      var cxm = 4.5*u, cym = 4.5*u;
+      for (var e=0;e<4;e++){
+        var P1 = HOLE_A[e], P2 = HOLE_A[(e+1)%4];
+        var mx2 = (P1[0]+P2[0])/2*u, my2 = (P1[1]+P2[1])/2*u;
+        var nx = cxm-mx2, ny = cym-my2, nl = Math.hypot(nx,ny);
+        ctx.font = '700 italic '+fs+'px '+serif;
+        ctx.fillStyle = C.jadeDeep;
+        ctx.fillText('c', mx2+nx/nl*0.55*u, my2+ny/nl*0.55*u);
+        // small right-angle mark at each hole corner
+        var Q = HOLE_A[e];
+        var Pn = HOLE_A[(e+1)%4], Pp = HOLE_A[(e+3)%4];
+        var d1x=(Pn[0]-Q[0])/5, d1y=(Pn[1]-Q[1])/5, d2x=(Pp[0]-Q[0])/5, d2y=(Pp[1]-Q[1])/5;
+        var m = 0.42*u, qx=Q[0]*u, qy=Q[1]*u;
+        ctx.lineWidth = 1.5; ctx.strokeStyle = C.jade;
+        ctx.beginPath();
+        ctx.moveTo(qx+d1x*m, qy+d1y*m);
+        ctx.lineTo(qx+(d1x+d2x)*m, qy+(d1y+d2y)*m);
+        ctx.lineTo(qx+d2x*m, qy+d2y*m);
+        ctx.stroke();
+      }
+      ctx.font = '700 '+(0.085*S)+'px '+serif;
+      ctx.fillStyle = C.jadeDeep;
+      ctx.fillText('c²', cxm, cym);
+      ctx.restore();
+    }
+
+    // ---- arrangement two: labels on the two square holes ----
+    if (holeB > 0){
+      ctx.save(); ctx.globalAlpha = holeB;
+      ctx.fillStyle = C.jadeDeep;
+      ctx.font = '700 '+(0.062*S)+'px '+serif;
+      ctx.fillText('4² = 16', 3*u, 3*u);
+      ctx.font = '700 '+(0.05*S)+'px '+serif;
+      ctx.fillText('3² = 9', 6.5*u, 6.5*u);
+      // top-edge 4|3 ticks
+      ctx.font = '700 '+fs+'px '+sans; ctx.fillStyle = C.inkSoft;
+      ctx.fillText('4', 3*u, 0.55*u);
+      ctx.fillText('3', 6.5*u, 0.55*u);
+      ctx.lineWidth = 1.5; ctx.strokeStyle = C.inkSoft;
+      ctx.beginPath(); ctx.moveTo(5*u, 0.78*u); ctx.lineTo(5*u, 1*u); ctx.stroke();
+      ctx.restore();
+    }
+
+    // ---- wrap-up: emphasize that the two square holes are a²+b² ----
+    if (eqB > 0){
+      ctx.save(); ctx.globalAlpha = eqB;
+      ctx.setLineDash([6,5]); ctx.lineWidth = 2.2; ctx.strokeStyle = C.jade;
+      ctx.strokeRect(1*u, 1*u, 4*u, 4*u);
+      ctx.strokeRect(5*u, 5*u, 3*u, 3*u);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+  }
+
+  // ---- captions ----
+  var cap = document.getElementById('cap');
+  var sub = document.getElementById('sub');
+  var stages = [
+    { p:0.00, c:'A right triangle.', s:'Two legs: 3 and 4. The longest side is the hypotenuse — call it c. So what is c, exactly?' },
+    { p:0.06, c:'Copy it into four identical pieces.', s:'Each one has area ½ × 3 × 4 = 6, so the four together cover 24. Remember that number — it never changes.' },
+    { p:0.15, c:'Drop them into a big square of side 7.', s:'7 = 3 + 4: every side of the frame splits into exactly 3 + 4, and the four right angles tuck into the four corners.' },
+    { p:0.36, c:'A hole opens up in the middle.', s:'All four of its sides are hypotenuses, length c; at each corner, two acute angles use up 90°, leaving exactly 90° — so it’s a square of side c, area c².' },
+    { p:0.46, c:'Keep the frame; slide the triangles.', s:'Triangle 2 slides to the bottom left, joining triangle 4 — which never moves — to form a 3×4 rectangle.' },
+    { p:0.56, c:'Triangle 1 slides right.', s:'Nothing added, nothing thrown away — the big square is still the same big square.' },
+    { p:0.66, c:'Triangle 3 slides up.', s:'The top-right corner gets its own 3×4 rectangle. Now watch the leftover space.' },
+    { p:0.78, c:'The hole is now two squares.', s:'One is 4×4, one is 3×3: total area 16 + 9 = 25.' },
+    { p:0.88, c:'Same frame, same four pieces — the holes must match.', s:'So c² = 3² + 4² = 25, and c = 5. That’s 3-4-5. Swap in any legs a and b, and the same rearrangement gives a² + b² = c².' }
+  ];
+  var lastIdx = -1;
+  function setStage(p){
+    var idx = 0;
+    for (var i=0;i<stages.length;i++){ if (p >= stages[i].p - 0.0001) idx = i; }
+    if (idx !== lastIdx){
+      lastIdx = idx;
+      if (reduce){
+        cap.textContent = stages[idx].c; sub.textContent = stages[idx].s;
+      } else {
+        cap.style.opacity = 0; sub.style.opacity = 0;
+        setTimeout(function(){ cap.textContent = stages[idx].c; sub.textContent = stages[idx].s; cap.style.opacity = 1; sub.style.opacity = 1; }, 120);
+      }
+    }
+  }
+
+  // ---- scroll wiring ----
+  var playSec = document.querySelector('.play');
+  var ticking = false;
+  function onScroll(){
+    var rect = playSec.getBoundingClientRect();
+    var total = playSec.offsetHeight - window.innerHeight;
+    var scrolled = clamp(-rect.top, 0, total);
+    var p = total > 0 ? scrolled/total : 0;
+    draw(p);
+    setStage(p);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(onScroll); } }, { passive:true });
+
+  // ---- autoplay ----
+  var playBtn = document.getElementById('playBtn');
+  if (reduce){ playBtn.style.display = 'none'; }
+  playBtn.addEventListener('click', function(){
+    var rect = playSec.getBoundingClientRect();
+    var startY = window.scrollY + rect.top + 2;
+    var total = playSec.offsetHeight - window.innerHeight;
+    var endY = startY + total;
+    playBtn.disabled = true; playBtn.textContent = 'Playing…';
+    // Frame-by-frame scrollTo needs instant scrolling; CSS scroll-behavior:smooth fights the rAF loop,
+    // causing stutter or an apparent no-op.
+    var prevScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, startY);
+    var duration = Math.max(8000, Math.min(22000, total * 4)), t0 = null;
+    function step(ts){
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts-t0)/duration);
+      window.scrollTo(0, startY + (endY-startY)*k);
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        playBtn.disabled = false; playBtn.textContent = '↻ Watch again';
+        document.documentElement.style.scrollBehavior = prevScrollBehavior;
+      }
+    }
+    requestAnimationFrame(step);
+  });
+
+  // ================= Hero: three squares on the three sides =================
+  var heroCv = document.getElementById('heroCv');
+  var hero = fit(heroCv);
+  function drawHero(t){
+    var ctx = hero.ctx, w = hero.w;
+    ctx.clearRect(0,0,w,hero.h);
+    // Content spans x:−4..7, y:−7..3, with 0.3 margin each side → 11.6 × 10.6
+    var u = w/11.6;
+    function X(x){ return (x+4.3)*u; }
+    function Y(y){ return (y+7.3)*u; }
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var serif = '"Noto Serif", serif';
+
+    // the two squares on the legs (known)
+    ctx.fillStyle = C.jadeSoft; ctx.strokeStyle = C.jade; ctx.lineWidth = 2;
+    ctx.fillRect(X(-4), Y(-4), 4*u, 4*u); ctx.strokeRect(X(-4), Y(-4), 4*u, 4*u);
+    ctx.fillRect(X(0), Y(0), 3*u, 3*u);   ctx.strokeRect(X(0), Y(0), 3*u, 3*u);
+    ctx.fillStyle = C.jadeDeep;
+    ctx.font = '700 '+(0.055*w)+'px '+serif;
+    ctx.fillText('4² = 16', X(-2), Y(-2));
+    ctx.font = '700 '+(0.048*w)+'px '+serif;
+    ctx.fillText('3² = 9', X(1.5), Y(1.5));
+
+    // the square on the hypotenuse (unknown, breathing)
+    var pulse = reduce ? 0.8 : 0.65 + 0.35*Math.sin(t*2);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(X(3),Y(0)); ctx.lineTo(X(0),Y(-4)); ctx.lineTo(X(4),Y(-7)); ctx.lineTo(X(7),Y(-3));
+    ctx.closePath();
+    ctx.globalAlpha = 0.10 + 0.08*pulse;
+    ctx.fillStyle = C.clay; ctx.fill();
+    ctx.globalAlpha = 0.55 + 0.45*pulse;
+    ctx.setLineDash([7,6]); ctx.lineWidth = 2.2; ctx.strokeStyle = C.clayDeep; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 0.55 + 0.45*pulse;
+    ctx.fillStyle = C.clayDeep;
+    ctx.font = '700 '+(0.062*w)+'px '+serif;
+    ctx.fillText('c² = ?', X(3.5), Y(-3.5));
+    ctx.restore();
+
+    // the triangle itself
+    ctx.beginPath();
+    ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(3),Y(0)); ctx.lineTo(X(0),Y(-4));
+    ctx.closePath();
+    ctx.fillStyle = C.clays[0]; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = C.clayDeep; ctx.lineJoin='round'; ctx.stroke();
+    // right-angle mark
+    ctx.lineWidth = 1.8; ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.strokeRect(X(0)+2, Y(-0.55*1), 0.42*u, 0.42*u);
+  }
+
+  if (reduce){ drawHero(0); }
+  else {
+    var h0 = null, heroOn = true;
+    function heroLoop(ts){
+      if (!heroOn) return;
+      if (h0===null) h0 = ts;
+      drawHero((ts-h0)/1000);
+      requestAnimationFrame(heroLoop);
+    }
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        var vis = es[0].isIntersecting;
+        if (vis && !heroOn){ heroOn = true; requestAnimationFrame(heroLoop); }
+        if (!vis) heroOn = false;
+      }).observe(heroCv);
+    }
+    requestAnimationFrame(heroLoop);
+  }
+
+  // ================= Finale: knotted rope right angle (static) =================
+  var ropeCv = document.getElementById('ropeCv');
+  var ropeS = fit(ropeCv);
+  function drawRope(){
+    var ctx = ropeS.ctx, w = ropeS.w;
+    ctx.clearRect(0,0,w,ropeS.h);
+    var u = w/8;
+    var P0 = [1.7,4.15], P1 = [5.7,4.15], P2 = [1.7,1.15]; // right angle at P0; sides 4, 3, 5
+    function px(P){ return [P[0]*u, P[1]*u]; }
+    var a = px(P0), b = px(P1), c = px(P2);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    // rope
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.lineWidth = Math.max(5, 0.02*w); ctx.strokeStyle = '#A9814F';
+    ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.lineTo(c[0],c[1]); ctx.closePath(); ctx.stroke();
+    // right-angle mark
+    ctx.lineWidth = 2; ctx.strokeStyle = C.jadeDeep;
+    ctx.strokeRect(a[0]+0.14*u, a[1]-0.5*u, 0.36*u, 0.36*u);
+    // 12 knots: one per unit along P0→P1→P2→P0
+    var path = [[P0,P1,4],[P1,P2,5],[P2,P0,3]];
+    ctx.fillStyle = '#6F4E26';
+    path.forEach(function(seg){
+      var A2 = seg[0], B2 = seg[1], n = seg[2];
+      for (var k=0;k<n;k++){
+        var x = lerp(A2[0],B2[0],k/n)*u, y = lerp(A2[1],B2[1],k/n)*u;
+        ctx.beginPath(); ctx.arc(x, y, Math.max(3.4, 0.013*w), 0, Math.PI*2); ctx.fill();
+      }
+    });
+    // side labels
+    var fs = Math.max(12, 0.036*w);
+    ctx.font = '700 '+fs+'px "Noto Sans", sans-serif';
+    ctx.fillStyle = C.inkSoft;
+    ctx.fillText('4', 3.7*u, 4.6*u);
+    ctx.fillText('3', 1.22*u, 2.65*u);
+    ctx.fillStyle = C.jadeDeep;
+    ctx.fillText('5', 4.05*u, 2.28*u);
+  }
+  drawRope();
+
+  // ---- scroll reveal ----
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, { threshold:0.16 });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // ---- resize ----
+  var rt;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){
+      stage = fit(cv); hero = fit(heroCv); ropeS = fit(ropeCv);
+      if (reduce) drawHero(0);
+      drawRope(); onScroll();
+    }, 150);
+  });
+
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(lastP); drawRope(); if (reduce) drawHero(0); }); }
+  onScroll();
+})();
+</script>
+</body>
+</html>

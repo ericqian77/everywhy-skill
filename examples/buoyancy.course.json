@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "slug": "buoyancy",
+  "topic": "buoyancy",
+  "title": "铁做的船，为什么不沉？",
+  "summary": "同一块 1 千克的铁：实心时只能排开 127 克水，追不上自重——沉；捏成碗，排开的水涨到 1000 克，浮力追上重力的那一刻，船稳住了。",
+  "tag": "physics",
+  "level": "general",
+  "lang": "zh",
+  "accent": "#0E8388",
+  "author": "ericqian77",
+  "license": "CC BY-SA 4.0",
+  "prerequisites": null,
+  "age_range": null
+}

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>铁做的船，为什么不沉？</title>
+<meta name="description" content="把「浮」拆成能看见的零件：排开的水、两支力的箭头、同一块铁的两种形态——看着排开的水从 127 克涨到 1000 克，浮力追上重力，铁船自己浮起来。" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="铁做的船，为什么不沉？" />
+<meta property="og:description" content="把「浮」拆成能看见的零件：排开的水、两支力的箭头、同一块铁的两种形态——看着排开的水从 127 克涨到 1000 克，浮力追上重力，铁船自己浮起来。" />
+<meta property="og:image" content="https://everywhy.ai/assets/og/buoyancy.png" />
+<meta property="og:locale" content="zh_CN" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F6F4ED;           /* 岸上：暖白 */
+    --bg-card:#FFFEFA;
+    --ink:#24313B;
+    --ink-soft:#64727D;
+    --accent:#0E8388;       /* 海水青 */
+    --accent-deep:#0A6266;
+    --water-hi:#C9E2E4;
+    --water-lo:#9CC8CD;
+    --cyan:#2FB6C6;         /* 排开的水 */
+    --cyan-deep:#1893A3;    /* 浮力 */
+    --coral:#C6584A;        /* 重力 / 自重线 */
+    --iron:#6B7480;         /* 铁 */
+    --iron-deep:#454C57;
+    --line:#E5DFD1;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans SC', system-ui, sans-serif; line-height:1.85;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .display{ font-family:'Noto Serif SC', serif; font-weight:600; }
+  ::selection{ background:var(--accent); color:#fff; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 22px; }
+
+  /* hero */
+  .hero{ min-height:94vh; display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center; gap:30px; padding-top:60px; }
+  .hero .tag{ display:inline-block; background:#D8ECEC; color:var(--accent-deep); font-weight:700; font-size:13px; letter-spacing:.08em; padding:6px 14px; border-radius:99px; margin-bottom:20px; }
+  h1{ font-family:'Noto Serif SC', serif; font-weight:700; font-size:clamp(32px,6.4vw,56px); line-height:1.24; margin:0 0 18px; }
+  h1 .pop{ color:var(--accent-deep); }
+  .hero p{ font-size:17px; color:var(--ink-soft); max-width:36ch; margin:0 0 26px; }
+  .scrolldown{ display:inline-flex; align-items:center; gap:10px; font-weight:700; color:var(--accent-deep); font-size:15px; }
+  .scrolldown .arrow{ width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; animation:bob 1.5s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(5px);} }
+  .herostage{ display:flex; align-items:center; justify-content:center; }
+  #heroCv{ width:min(270px, 62vw); aspect-ratio:4/5; height:auto; }
+
+  /* scroll-driven sticky stage */
+  .play{ position:relative; height:560vh; }
+  .play-sticky{ position:sticky; top:0; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:0 16px; }
+  #cv{ width:min(430px, 88vw); aspect-ratio:10/9; height:auto; }
+  .play-cap{ font-family:'Noto Serif SC', serif; font-weight:600; font-size:clamp(19px,4vw,24px); line-height:1.5; color:var(--ink); max-width:26ch; min-height:1.5em; transition:opacity .25s ease; }
+  .play-sub{ font-size:14.5px; line-height:1.7; color:var(--ink-soft); max-width:38ch; min-height:3.4em; transition:opacity .25s ease; }
+  .playrow{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .scrollhint{ font-size:13px; color:var(--ink-soft); font-weight:700; letter-spacing:.05em; }
+  .playbtn{
+    font-family:'Noto Sans SC',sans-serif; font-weight:700; font-size:13px; color:#fff;
+    background:var(--accent); border:none; border-radius:99px; padding:7px 16px; cursor:pointer;
+    transition:transform .08s ease, background .15s ease;
+  }
+  .playbtn:hover{ background:var(--accent-deep); }
+  .playbtn:active{ transform:scale(.96); }
+  .playbtn:disabled{ opacity:.65; cursor:default; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; font-size:12.5px; color:var(--ink-soft); }
+  .legend .sw{ display:inline-block; width:14px; height:4px; border-radius:2px; margin-right:6px; vertical-align:3px; }
+
+  /* recap */
+  .steps{ padding:90px 0 20px; }
+  .steps h2{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(26px,5vw,38px); text-align:center; margin:0 0 12px; }
+  .steps .intro{ text-align:center; color:var(--ink-soft); max-width:34ch; margin:0 auto 46px; }
+  .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:14px; display:grid; grid-template-columns:52px 1fr; gap:18px; align-items:start; }
+  .card .nm{ width:48px; height:48px; border-radius:50%; background:#D8ECEC; color:var(--accent-deep); font-family:'Noto Serif SC',serif; font-weight:700; font-size:20px; display:flex; align-items:center; justify-content:center; }
+  .card h3{ font-family:'Noto Serif SC',serif; font-weight:600; font-size:19px; margin:4px 0 6px; }
+  .card p{ margin:0; color:var(--ink-soft); font-size:15.5px; }
+  .card p b{ color:var(--ink); }
+  .card p .hl{ color:var(--cyan-deep); font-weight:700; }
+  .card p .hl2{ color:var(--coral); font-weight:700; }
+
+  .law{ margin:30px 0 0; background:linear-gradient(180deg,#E4F1F1,#FBFDFD); border:1px solid #C6E0E1; border-radius:16px; padding:26px; text-align:center; }
+  .law .big{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(22px,5vw,30px); color:var(--accent-deep); margin-bottom:8px; }
+  .law p{ margin:0 auto; color:var(--ink-soft); max-width:44ch; font-size:15px; }
+  .law p b{ color:var(--ink); }
+
+  /* finale: ship */
+  .finale{ text-align:center; padding:80px 0 20px; }
+  .finale h2{ font-family:'Noto Serif SC',serif; font-weight:700; font-size:clamp(24px,5vw,36px); margin:0 0 12px; }
+  .finale .shipstage{ display:flex; justify-content:center; margin:26px 0 18px; }
+  #shipCv{ width:min(460px, 88vw); aspect-ratio:8/5; height:auto; }
+  .finale p{ color:var(--ink-soft); max-width:40ch; margin:0 auto; font-size:16px; }
+  .finale p b{ color:var(--ink); }
+
+  footer{ border-top:1px dashed var(--line); margin-top:70px; padding:24px 0 50px; text-align:center; color:var(--ink-soft); font-size:13px; }
+
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; min-height:auto; padding:96px 0 40px; text-align:center; }
+    .hero p{ margin-left:auto; margin-right:auto; }
+    .herostage{ order:-1; }
+    .scrolldown{ justify-content:center; }
+    .card{ grid-template-columns:42px 1fr; gap:14px; padding:18px; }
+    .card .nm{ width:40px; height:40px; font-size:17px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scrolldown .arrow{ animation:none; }
+    .play-cap,.play-sub{ transition:none; }
+  }
+</style>
+</head>
+<body>
+<a href="../index.html" class="dz-back">← 拆解</a><style>.dz-back{position:fixed;top:16px;left:16px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;color:#201D17;background:#FBF9F3;padding:7px 14px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-back:hover{transform:translateY(-1px);}</style>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="tag">物理 · 浮力</span>
+      <h1>铁做的船，<br>为什么<span class="pop">不沉</span>？</h1>
+      <p>一颗铁钉掉进水里，眨眼就到底；十万吨的铁船，却稳稳浮着。铁还是那块铁——变的是什么？往下滚，把「浮」这件事拆开。</p>
+      <div class="scrolldown"><span class="arrow">↓</span>往下滚，拆开看看</div>
+    </div>
+    <div class="herostage">
+      <canvas id="heroCv" aria-label="同一块铁的两种命运：实心块沉在水底，捏成碗浮在水面"></canvas>
+    </div>
+  </section>
+</main>
+
+<section class="play" aria-label="往下滚动，看同一块铁先沉底、再捏成碗浮起来的完整过程">
+  <div class="play-sticky">
+    <div class="playrow">
+      <span class="scrollhint">↓ 慢慢往下滚 ↓</span>
+      <button id="playBtn" class="playbtn" type="button">▶ 自动播放</button>
+    </div>
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <div class="play-cap display" id="cap">一块 1 千克的铁，一缸水。</div>
+    <div class="play-sub" id="sub">铁的密度约 7.9 g/cm³，是水的近 8 倍——这 1 千克铁只占 127 cm³，比拳头还小。右边的量杯，一会儿替你记录它「排开」了多少水。</div>
+    <div class="legend" aria-hidden="true">
+      <span><span class="sw" style="background:var(--iron)"></span>铁</span>
+      <span><span class="sw" style="background:var(--cyan)"></span>排开的水</span>
+      <span><span class="sw" style="background:var(--coral)"></span>重力 ↓</span>
+      <span><span class="sw" style="background:var(--cyan-deep)"></span>浮力 ↑</span>
+      <span>箭头长度 ∝ 力的大小</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="steps">
+    <h2 class="reveal">回放：我们拆出了哪几个零件？</h2>
+    <p class="intro reveal">「浮」＝ 排开的水 × 两支箭头 × 形状。</p>
+
+    <div class="card reveal">
+      <div class="nm">1</div>
+      <div>
+        <h3>排开的水：入水时挤走的那团水</h3>
+        <p>物体入水，要把原来占着这块地方的水挤走——这团水叫<span class="hl">排开的水</span>。两句话别混：<b>完全浸没</b>时，排开的<b>体积</b>等于物体的体积；<b>漂浮</b>时，排开的水的<b>重量</b>等于物体的重量。一个说体积，一个说重量。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">2</div>
+      <div>
+        <h3>浮力 ＝ 排开的水的重量</h3>
+        <p>这就是<b>阿基米德原理</b>。浮力只看排开了多少水，<b>不看物体是什么材料</b>。所以完全浸没之后再往深处沉，排开的水不变，浮力也几乎不变——不存在「越深托得越狠」。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">3</div>
+      <div>
+        <h3>同一块铁的两种形态</h3>
+        <p>实心块：密度 7.9 g/cm³ ＞ 水的 1.0 → 排开的水永远比自己轻 → 沉。捏成碗：铁＋舱里的空气，平均密度 1000 g ÷ 1407 cm³ ≈ <b>0.71 g/cm³</b> ＜ 水 → 浮。注意：空气并不是「托着」船——托着船的<b>始终是水</b>，空气只是把平均密度拉低了。</p>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="nm">4</div>
+      <div>
+        <h3>载重越多，吃水越深</h3>
+        <p>空碗吃水 5 厘米。往碗里每加 100 克货，就得多排开 100 克水，吃水多下去约 0.5 厘米。加到约 <span class="hl2">400 克</span>，水就到了碗沿——再多，水漫进舱里，平均密度超过水，沉。真实的船在船舷上画一条<b>载重线</b>，把这条底线钉死。</p>
+      </div>
+    </div>
+
+    <div class="law reveal">
+      <div class="big">F浮 ＝ ρ水 · g · V排</div>
+      <p>排开的水越多，浮力越大——与物体自身材质无关。代入这只碗：水的密度 ρ水 ＝ <b>1.0 g/cm³</b>，排开 V排 ＝ <b>1000 cm³</b> → 排开的水重 1000 克，浮力约 <b>9.8 牛</b>，恰好托住 1 千克的铁。</p>
+    </div>
+  </section>
+
+  <section class="finale">
+    <h2 class="reveal">所以——十万吨的巨轮，浮着</h2>
+    <div class="shipstage reveal">
+      <canvas id="shipCv" aria-hidden="true"></canvas>
+    </div>
+    <p class="reveal">一艘满载 10 万吨的货轮浮在海上，意思就是：它此刻正排开 <b>10 万吨的水</b>。装的货越多，船身越往下坐，排开的水越多，浮力跟着长——直到再次追平船重。船舷上那条<b>载重线</b>，就是不许再往下坐的底线。</p>
+  </section>
+
+  <footer>浮力 · 拆开来讲 —— 滚回上面那张图，可以再拆一遍</footer>
+
+<footer class="dz-end"><p>拆完了：铁没变轻，是它排开的水变重了。</p><nav><a href="../index.html">← 回到目录</a></nav></footer><style>.dz-end{margin:70px auto 60px;text-align:center;}.dz-end p{font-size:15px;opacity:0.75;margin:0 0 14px;}.dz-end nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}.dz-end a{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;font-weight:700;text-decoration:none;color:#201D17;background:#FBF9F3;padding:9px 18px;border-radius:99px;border:1px solid rgba(32,29,23,0.12);box-shadow:0 4px 14px rgba(32,29,23,0.12);transition:transform .15s ease;}.dz-end a:hover{transform:translateY(-1px);}</style>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // ---- 数值验算（全篇几何与这些数字自洽）----
+  // 铁：m = 1000 g，ρ铁 = 7.9 g/cm³ → V铁 = 1000/7.9 ≈ 126.6 ≈ 127 cm³
+  // 实心立方体：边长 = 127^(1/3) ≈ 5.03 cm，底面积 ≈ 25.3 cm²
+  // 完全浸没：V排 = 127 cm³ → 排开的水重 127 g < 1000 g → 沉
+  //   （浸没后再下沉 V排 不变 → 浮力不变，约为重力的 127/1000 ≈ 1/8）
+  // 碗：圆柱形，外半径 R = 8 cm，高 H = 7 cm，壁/底厚 t ≈ 0.24 cm
+  //   铁体积检验：π·8²·7 − π·(8−0.24)²·(7−0.24) = π·(448 − 60.28×6.76) ≈ π·40.3 ≈ 126.6 cm³ ✓ 同一块铁
+  //   （画图时壁厚按 0.7 cm 画——真实 2.4 mm 在屏幕上只有一两个像素；文案已注明）
+  // 漂浮平衡：每吃水 d cm 排开 π·8²·d ≈ 201.06·d cm³
+  //   201.06·d = 1000 → d ≈ 4.97 ≈ 5.0 cm（< H = 7，浮得住；干舷约 2 cm）
+  //   满舷极限：π·8²·7 ≈ 1407 cm³ → 还能再载约 1407 − 1000 ≈ 400 g；每加 100 g 吃水 +100/201 ≈ 0.5 cm
+  //   平均密度：1000 g ÷ 1407 cm³ ≈ 0.71 g/cm³ < 1 → 浮 ✓
+  // 水面上升：水缸底面积按 40 cm × 25 cm = 1000 cm² 记 → 排开 1000 cm³ 时水面升高 1.0 cm
+  // 箭头比例：0.7 cm 箭长 = 100 克的力 → 重力 7 cm；浸没铁块的浮力 0.89 cm；漂浮时浮力 7 cm（与重力等长）
+  var IRON_V   = 127;                    // cm³
+  var BLOCK_S  = 5.03;                   // cm，立方体边长
+  var BOWL_W   = 16, BOWL_H = 7;         // cm，碗的外宽（直径）与外高
+  var BOWL_A   = Math.PI * 64;           // cm²，πR² ≈ 201.06
+  var DRAFT_EQ = 1000 / BOWL_A;          // cm，平衡吃水 ≈ 4.974
+  var WALL_VIS = 0.7;                    // cm，画图用壁厚（真实约 0.24）
+  var PXG      = 0.007;                  // 箭头比例：cm / 克力
+
+  var C = {
+    ink:'#24313B', inkSoft:'#64727D',
+    accent:'#0E8388', accentDeep:'#0A6266',
+    waterHi:'rgba(150,200,205,0.50)', waterLo:'rgba(110,170,180,0.72)',
+    cyan:'#2FB6C6', cyanDeep:'#1893A3',
+    coral:'#C6584A',
+    iron:'#6B7480', ironDeep:'#454C57',
+    bg:'#F6F4ED'
+  };
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function ramp(p,a,b){ return clamp((p-a)/(b-a), 0, 1); }
+  function ez(k){ return k<0.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2; }
+  function lerp(a,b,k){ return a+(b-a)*k; }
+
+  function fit(cv){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { ctx:ctx, w:r.width, h:r.height };
+  }
+  // 竖直力箭头：从 (x,y0) 画到 (x,y1)，自带箭头帽（帽长随箭身长度封顶，避免短箭头只剩帽）
+  function vArrow(ctx, x, y0, y1, color, lw){
+    var len = Math.abs(y1-y0); if (len < 1) return;
+    var dir = y1 > y0 ? 1 : -1;
+    var head = Math.min(9, Math.max(4, len*0.45));
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1 - dir*head*0.7); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y1);
+    ctx.lineTo(x - head*0.62, y1 - dir*head);
+    ctx.lineTo(x + head*0.62, y1 - dir*head);
+    ctx.closePath(); ctx.fill();
+  }
+
+  // ================= 主舞台（滚动驱动） =================
+  var cv = document.getElementById('cv');
+  var stage = fit(cv);
+  var lastP = 0;
+
+  function geo(){
+    var w = stage.w, h = stage.h;
+    var s = 0.015*w;                                    // px / cm
+    return {
+      w:w, h:h, s:s,
+      tank:{ x0:0.05*w, x1:0.65*w, top:0.13*h, bot:0.84*h },
+      yW0: 0.42*h,                                      // 静水面
+      cup:{ x0:0.73*w, x1:0.945*w, top:0.30*h, bot:0.80*h, cap:1500 },
+      xo: 0.35*w                                        // 物体中线
+    };
+  }
+
+  function draw(p){
+    lastP = p;
+    var ctx = stage.ctx, g = geo(), w = g.w, h = g.h, s = g.s;
+    ctx.clearRect(0,0,w,h);
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    var fs = Math.max(11, 0.034*w);
+    ctx.font = '500 '+fs+'px "Noto Sans SC", sans-serif';
+
+    // ---- 时间线 ----
+    var drop1 = ez(ramp(p, 0.05, 0.16));   // 铁块入水到全没
+    var sink  = ez(ramp(p, 0.18, 0.29));   // 沉到底（V排、浮力都不再变）
+    var lift  = ez(ramp(p, 0.42, 0.50));   // 捞出来
+    var morph = ez(ramp(p, 0.50, 0.58));   // 捏成碗
+    var drop2 = ez(ramp(p, 0.60, 0.76));   // 碗下水，吃水到平衡
+    var eqA   = ramp(p, 0.78, 0.86);       // 平衡标注
+    var aha   = ez(ramp(p, 0.88, 0.97));   // 拼回去：实心幽灵对照
+    var gA    = ramp(p, 0.02, 0.05);       // 重力箭头浮现
+
+    var floorD = (g.tank.bot - g.yW0)/s;   // 缸底在水面下的深度（cm）
+
+    // ---- 物体底面在水面下的深度 dB（cm，负 = 在水面上方）----
+    var dB;
+    if (lift <= 0){
+      dB = lerp(lerp(-4, BLOCK_S, drop1), floorD, sink);
+    } else {
+      dB = lerp(floorD, -6, lift);
+    }
+    if (drop2 > 0) dB = lerp(-6, DRAFT_EQ, drop2);
+
+    // ---- 排开的水 ----
+    var Vdisp;
+    if (morph <= 0){
+      Vdisp = IRON_V * clamp(dB, 0, BLOCK_S) / BLOCK_S;   // 浸没比例 × 127，全没恰好 127
+    } else {
+      Vdisp = BOWL_A * clamp(dB, 0, DRAFT_EQ);            // 201.06 × 吃水，平衡时恰好 1000
+    }
+    var yW = g.yW0 - (Vdisp/1000)*s;       // 缸底面积 1000 cm² → 排开 1000 cm³ 水面升 1 cm
+
+    // ---- 物体几何（cm → px）----
+    var ow = lerp(BLOCK_S, BOWL_W, morph), oh = lerp(BLOCK_S, BOWL_H, morph);
+    var cavW = lerp(0, BOWL_W - 2*WALL_VIS, morph), cavH = lerp(0, BOWL_H - WALL_VIS, morph);
+    var yBot = yW + dB*s, yTop = yBot - oh*s;
+    var xL = g.xo - ow*s/2, xR = g.xo + ow*s/2;
+
+    // ---- 水缸：水体 + 水面 + 缸壁 ----
+    var grad = ctx.createLinearGradient(0, yW, 0, g.tank.bot);
+    grad.addColorStop(0, C.waterHi); grad.addColorStop(1, C.waterLo);
+    ctx.fillStyle = grad;
+    ctx.fillRect(g.tank.x0, yW, g.tank.x1-g.tank.x0, g.tank.bot-yW);
+    ctx.beginPath();
+    for (var x=g.tank.x0; x<=g.tank.x1; x+=4){
+      var yy = yW + Math.sin((x-g.tank.x0)/(g.tank.x1-g.tank.x0)*Math.PI*6)*0.004*h;
+      (x===g.tank.x0)?ctx.moveTo(x,yy):ctx.lineTo(x,yy);
+    }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    ctx.lineWidth = 3; ctx.strokeStyle = '#8B8375'; ctx.lineJoin='round';
+    ctx.beginPath();
+    ctx.moveTo(g.tank.x0, g.tank.top); ctx.lineTo(g.tank.x0, g.tank.bot);
+    ctx.lineTo(g.tank.x1, g.tank.bot); ctx.lineTo(g.tank.x1, g.tank.top);
+    ctx.stroke();
+    ctx.fillStyle = C.inkSoft; ctx.fillText('空气', g.tank.x0+0.02*w, 0.185*h);
+    ctx.fillStyle = C.accentDeep; ctx.fillText('水', g.tank.x0+0.02*w, g.tank.bot-0.045*h);
+
+    // ---- 幽灵对照（拼回去）：实心块沉在缸底左侧 ----
+    if (aha > 0){
+      ctx.save(); ctx.globalAlpha = aha*0.85;
+      var gs = BLOCK_S*s, gx = 0.15*w - gs/2, gy = g.tank.bot - gs;
+      ctx.setLineDash([6,5]); ctx.lineWidth = 2; ctx.strokeStyle = C.ironDeep;
+      ctx.strokeRect(gx, gy, gs, gs);
+      ctx.setLineDash([]);
+      vArrow(ctx, 0.15*w, gy+gs/2, gy+gs/2 - IRON_V*PXG*s, C.cyanDeep, 2);
+      ctx.textAlign='center'; ctx.fillStyle = C.ironDeep;
+      ctx.font = '700 '+(fs-1)+'px "Noto Sans SC", sans-serif';
+      ctx.fillText('实心时：127 克 → 沉', 0.185*w, gy - 0.045*h);
+      ctx.font = '500 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    // ---- 物体：铁（外轮廓）＋ 舱（挖空显示空气）----
+    ctx.fillStyle = C.iron;
+    ctx.fillRect(xL, yTop, ow*s, oh*s);
+    if (cavW > 0.01){
+      ctx.fillStyle = C.bg;
+      ctx.fillRect(g.xo - cavW*s/2, yTop, cavW*s, cavH*s);
+    }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ironDeep;
+    ctx.strokeRect(xL, yTop, ow*s, oh*s);
+    if (cavW > 0.01){
+      ctx.strokeRect(g.xo - cavW*s/2, yTop, cavW*s, cavH*s);
+    }
+
+    // ---- 排开的水：水线以下整个“占位”高亮（含舱里空气占的地方）----
+    if (Vdisp > 0.5){
+      ctx.save();
+      ctx.beginPath(); ctx.rect(g.tank.x0, yW, g.tank.x1-g.tank.x0, g.tank.bot-yW); ctx.clip();
+      ctx.globalAlpha = 0.20; ctx.fillStyle = C.cyan;
+      ctx.fillRect(xL, yTop, ow*s, oh*s);
+      ctx.globalAlpha = 0.95;
+      ctx.setLineDash([6,4]); ctx.lineWidth = 2; ctx.strokeStyle = C.cyanDeep;
+      ctx.strokeRect(xL, yTop, ow*s, oh*s);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    // ---- 物体上方的说明标签 ----
+    var lbl1A = 1 - ramp(p, 0.05, 0.09);
+    var lbl2A = morph * (1 - ramp(p, 0.61, 0.65));
+    if (lbl1A > 0 || lbl2A > 0){
+      ctx.save(); ctx.textAlign='center';
+      ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = C.ironDeep;
+      if (lbl1A > 0){ ctx.globalAlpha = lbl1A; ctx.fillText('1 千克铁 · 127 cm³', g.xo, yTop-0.04*h); }
+      if (lbl2A > 0){ ctx.globalAlpha = lbl2A; ctx.fillText('还是那 127 cm³ 铁', g.xo, yTop-0.04*h); }
+      ctx.restore();
+    }
+
+    // ---- 两支箭头（长度 ∝ 力；0.7cm = 100 克力）----
+    var yc = (yTop + yBot)/2;
+    if (gA > 0){
+      ctx.save(); ctx.globalAlpha = gA;
+      var Lg = 1000*PXG*s;                       // 重力恒为 1000 克力
+      vArrow(ctx, g.xo, yc, yc+Lg, C.coral, 3);
+      ctx.fillStyle = C.coral;
+      ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.fillText('重力 1000 克', g.xo+0.022*w, yc+Lg*0.62);
+      if (Vdisp > 0.5){
+        var Lb = Vdisp*PXG*s;                    // 浮力 = 排开的水的克数
+        vArrow(ctx, g.xo, yc, yc-Lb, C.cyanDeep, 3);
+        ctx.fillStyle = C.cyanDeep;
+        ctx.textAlign='right';
+        ctx.fillText('浮力 '+Math.round(Vdisp)+' 克', g.xo-0.022*w, yc-Math.max(Lb*0.62, 0.055*h));
+        ctx.textAlign='left';
+      }
+      ctx.font = '500 '+fs+'px "Noto Sans SC", sans-serif';
+      ctx.restore();
+    }
+
+    // ---- 平衡标注：吃水 / 露出 ----
+    if (eqA > 0){
+      ctx.save(); ctx.globalAlpha = eqA;
+      var bx = xL - 0.028*w;
+      ctx.lineWidth = 1.6; ctx.strokeStyle = C.accentDeep;
+      ctx.beginPath(); ctx.moveTo(bx, yW); ctx.lineTo(bx, yBot); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx-4, yW); ctx.lineTo(bx+4, yW); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx-4, yBot); ctx.lineTo(bx+4, yBot); ctx.stroke();
+      ctx.textAlign='right'; ctx.fillStyle = C.accentDeep;
+      ctx.font = '700 '+(fs-1)+'px "Noto Sans SC", sans-serif';
+      ctx.fillText('吃水 5 cm', bx-0.012*w, (yW+yBot)/2);
+      ctx.strokeStyle = C.inkSoft;
+      ctx.beginPath(); ctx.moveTo(bx, yTop); ctx.lineTo(bx, yW); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx-4, yTop); ctx.lineTo(bx+4, yTop); ctx.stroke();
+      ctx.fillStyle = C.inkSoft;
+      ctx.fillText('露出 2 cm', bx-0.012*w, (yTop+yW)/2);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    // ---- 量杯：排开的水的“账本” ----
+    var cp = g.cup;
+    ctx.save();
+    // 杯里的水
+    var lv = clamp(Vdisp/cp.cap, 0, 1);
+    var yLv = cp.bot - lv*(cp.bot-cp.top);
+    if (lv > 0){
+      var cg = ctx.createLinearGradient(0, yLv, 0, cp.bot);
+      cg.addColorStop(0,'rgba(47,182,198,0.45)'); cg.addColorStop(1,'rgba(24,147,163,0.65)');
+      ctx.fillStyle = cg;
+      ctx.fillRect(cp.x0, yLv, cp.x1-cp.x0, cp.bot-yLv);
+      ctx.lineWidth = 2; ctx.strokeStyle = C.cyanDeep;
+      ctx.beginPath(); ctx.moveTo(cp.x0, yLv); ctx.lineTo(cp.x1, yLv); ctx.stroke();
+    }
+    // 杯壁（开口向上）
+    ctx.lineWidth = 3; ctx.strokeStyle = '#8B8375'; ctx.lineJoin='round';
+    ctx.beginPath();
+    ctx.moveTo(cp.x0, cp.top); ctx.lineTo(cp.x0, cp.bot);
+    ctx.lineTo(cp.x1, cp.bot); ctx.lineTo(cp.x1, cp.top);
+    ctx.stroke();
+    // 刻度（500 / 1000 / 1500）
+    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(100,114,125,0.6)';
+    [500,1000,1500].forEach(function(v){
+      var ty = cp.bot - (v/cp.cap)*(cp.bot-cp.top);
+      ctx.beginPath(); ctx.moveTo(cp.x0, ty); ctx.lineTo(cp.x0+0.018*w, ty); ctx.stroke();
+    });
+    // 自重线：1000 克（追上它就浮）
+    var yr = cp.bot - (1000/cp.cap)*(cp.bot-cp.top);
+    ctx.setLineDash([5,4]); ctx.lineWidth = 2; ctx.strokeStyle = C.coral;
+    ctx.beginPath(); ctx.moveTo(cp.x0, yr); ctx.lineTo(cp.x1, yr); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='center';
+    ctx.fillStyle = C.coral;
+    ctx.font = '700 '+(fs-1)+'px "Noto Sans SC", sans-serif';
+    ctx.fillText('自重 1000 克', (cp.x0+cp.x1)/2, yr-0.022*h);
+    // 标题 + 读数
+    ctx.fillStyle = C.cyanDeep;
+    ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+    ctx.fillText('排开的水', (cp.x0+cp.x1)/2, cp.top-0.035*h);
+    ctx.fillText(Math.round(Vdisp)+' 克', (cp.x0+cp.x1)/2, cp.bot+0.038*h);
+    ctx.fillStyle = C.inkSoft;
+    ctx.font = '500 '+(fs-1)+'px "Noto Sans SC", sans-serif';
+    ctx.fillText('（'+Math.round(Vdisp)+' cm³ 的水）', (cp.x0+cp.x1)/2, cp.bot+0.075*h);
+    ctx.restore();
+  }
+
+  // ---- 字幕 ----
+  var cap = document.getElementById('cap');
+  var sub = document.getElementById('sub');
+  var stages = [
+    { p:0.00, c:'一块 1 千克的铁，一缸水。', s:'铁的密度约 7.9 g/cm³，是水的近 8 倍——这 1 千克铁只占 127 cm³，比拳头还小。右边的量杯，一会儿替你记录它「排开」了多少水。' },
+    { p:0.05, c:'零件一：排开的水。', s:'铁块入水，得把原本占着这块地方的水挤走。被挤走的这团水，叫「排开的水」。全部没入后，排开的体积＝物体自己的体积：127 cm³。' },
+    { p:0.18, c:'零件二：两支箭头。', s:'向下是重力，只看铁有多重：1000 克。向上是浮力，只看排开的水有多重：127 克。注意——再往深处沉，排开的水不变，浮力也不再变大。' },
+    { p:0.32, c:'127 克，追不上 1000 克 → 沉。', s:'浮力只有重力的约 1/8。实心的铁，排开的水永远比自己轻——怎么扔都是沉。' },
+    { p:0.42, c:'捞出来，捏成一只碗。', s:'还是那块铁，127 cm³，一克没少。变的只有形状：现在它能替自己在水面「占」下大得多的地盘。（真实壁厚约 2.4 毫米，图里画粗了才看得见。）' },
+    { p:0.60, c:'再下水：看排开的水疯涨。', s:'碗每吃水 1 厘米，就多排开约 200 cm³ 的水——量杯里的水位一路追着红线跑，浮力箭头跟着一起变长。' },
+    { p:0.78, c:'追上了：1000 克 ＝ 1000 克。', s:'吃水 5 厘米时，排开的水恰好 1000 cm³、重 1000 克，正好等于铁的全部体重。两支箭头一样长，碗稳稳停住——这就是「漂浮」。' },
+    { p:0.88, c:'不是铁变轻了，是它排开的水变重了。', s:'同一块铁，实心时只能排开 127 克水；捏成碗，排开了 1000 克。这就是阿基米德原理：浮力＝排开的水的重量。' }
+  ];
+  var lastIdx = -1;
+  function setStage(p){
+    var idx = 0;
+    for (var i=0;i<stages.length;i++){ if (p >= stages[i].p - 0.0001) idx = i; }
+    if (idx !== lastIdx){
+      lastIdx = idx;
+      if (reduce){
+        cap.textContent = stages[idx].c; sub.textContent = stages[idx].s;
+      } else {
+        cap.style.opacity = 0; sub.style.opacity = 0;
+        setTimeout(function(){ cap.textContent = stages[idx].c; sub.textContent = stages[idx].s; cap.style.opacity = 1; sub.style.opacity = 1; }, 120);
+      }
+    }
+  }
+
+  // ---- 滚动接线 ----
+  var playSec = document.querySelector('.play');
+  var ticking = false;
+  function onScroll(){
+    var rect = playSec.getBoundingClientRect();
+    var total = playSec.offsetHeight - window.innerHeight;
+    var scrolled = clamp(-rect.top, 0, total);
+    var p = total > 0 ? scrolled/total : 0;
+    draw(p);
+    setStage(p);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(onScroll); } }, { passive:true });
+
+  // ---- 自动播放 ----
+  var playBtn = document.getElementById('playBtn');
+  if (reduce){ playBtn.style.display = 'none'; }
+  playBtn.addEventListener('click', function(){
+    var rect = playSec.getBoundingClientRect();
+    var startY = window.scrollY + rect.top + 2;
+    var total = playSec.offsetHeight - window.innerHeight;
+    var endY = startY + total;
+    playBtn.disabled = true; playBtn.textContent = '播放中…';
+    // 逐帧 scrollTo 要用瞬时滚动;CSS 的 scroll-behavior:smooth 会和 rAF 循环打架,导致卡顿甚至看起来没反应
+    var prevScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, startY);
+    var duration = Math.max(8000, Math.min(22000, total * 4)), t0 = null;
+    function step(ts){
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts-t0)/duration);
+      window.scrollTo(0, startY + (endY-startY)*k);
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        playBtn.disabled = false; playBtn.textContent = '↻ 再看一次';
+        document.documentElement.style.scrollBehavior = prevScrollBehavior;
+      }
+    }
+    requestAnimationFrame(step);
+  });
+
+  // ================= 首屏：同一块铁的两种命运 =================
+  var heroCv = document.getElementById('heroCv');
+  var hero = fit(heroCv);
+  function drawHero(t){
+    var ctx = hero.ctx, w = hero.w, h = hero.h;
+    ctx.clearRect(0,0,w,h);
+    var yS = 0.42*h;
+    // 水
+    var grad = ctx.createLinearGradient(0, yS, 0, 0.94*h);
+    grad.addColorStop(0,'rgba(150,200,205,0.45)'); grad.addColorStop(1,'rgba(110,170,180,0.75)');
+    ctx.fillStyle = grad; ctx.fillRect(0.04*w, yS, 0.92*w, 0.52*h);
+    // 水面（微微晃动）
+    ctx.beginPath();
+    for (var x=0.04*w; x<=0.96*w; x+=3){
+      var yy = yS + Math.sin(x/w*8 + t*1.5)*0.006*h;
+      (x===0.04*w)?ctx.moveTo(x,yy):ctx.lineTo(x,yy);
+    }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    // 浮着的碗：吃水 5/7 ≈ 71% 碗高（与正文数值一致）
+    var bw = 0.52*w, bh = bw*7/16, wall = bw*0.7/16;
+    var bob = Math.sin(t*1.2)*0.004*h;
+    var bx = 0.60*w - bw/2, byBot = yS + bh*(5/7) + bob, byTop = byBot - bh;
+    ctx.fillStyle = C.iron; ctx.fillRect(bx, byTop, bw, bh);
+    ctx.fillStyle = C.bg;  ctx.fillRect(bx+wall, byTop, bw-2*wall, bh-wall);
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ironDeep;
+    ctx.strokeRect(bx, byTop, bw, bh);
+    ctx.strokeRect(bx+wall, byTop, bw-2*wall, bh-wall);
+    // 沉底的实心块（同一块铁：边长 5.03/16 × 碗宽）
+    var gs = bw*5.03/16, gx = 0.17*w, gy = 0.94*h - gs;
+    ctx.fillStyle = C.iron; ctx.fillRect(gx, gy, gs, gs);
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ironDeep; ctx.strokeRect(gx, gy, gs, gs);
+    // 气泡
+    if (t > 0){
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      for (var i=0;i<3;i++){
+        var bt = (t*0.35 + i*0.33) % 1;
+        ctx.beginPath();
+        ctx.arc(gx+gs/2 + Math.sin(bt*9+i)*0.02*w, gy - bt*(gy-yS-0.03*h), (1-bt)*0.008*w+1.2, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+  if (reduce){ drawHero(0.6); }
+  else {
+    var h0 = null, heroOn = true;
+    function heroLoop(ts){
+      if (!heroOn) return;
+      if (h0===null) h0 = ts;
+      drawHero((ts-h0)/1000);
+      requestAnimationFrame(heroLoop);
+    }
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        var vis = es[0].isIntersecting;
+        if (vis && !heroOn){ heroOn = true; requestAnimationFrame(heroLoop); }
+        if (!vis) heroOn = false;
+      }).observe(heroCv);
+    }
+    requestAnimationFrame(heroLoop);
+  }
+
+  // ================= 结尾：十万吨的巨轮（静态图） =================
+  var shipCv = document.getElementById('shipCv');
+  var shipS = fit(shipCv);
+  function drawShip(){
+    var ctx = shipS.ctx, w = shipS.w, h = shipS.h;
+    ctx.clearRect(0,0,w,h);
+    var yS = 0.46*h;
+    var fs = Math.max(10, 0.026*w);
+    // 海
+    var grad = ctx.createLinearGradient(0, yS, 0, h);
+    grad.addColorStop(0,'rgba(150,200,205,0.45)'); grad.addColorStop(1,'rgba(110,170,180,0.75)');
+    ctx.fillStyle = grad; ctx.fillRect(0, yS, w, h-yS);
+    // 船体（侧视）：甲板 0.30h，龙骨 0.62h，水线 0.46h 横穿船身
+    var hull = [
+      {x:0.16*w, y:0.30*h}, {x:0.86*w, y:0.30*h},
+      {x:0.78*w, y:0.62*h}, {x:0.26*w, y:0.62*h}
+    ];
+    function hullPath(){
+      ctx.beginPath();
+      ctx.moveTo(hull[0].x, hull[0].y);
+      ctx.lineTo(hull[1].x, hull[1].y);
+      ctx.lineTo(hull[2].x, hull[2].y);
+      ctx.lineTo(hull[3].x, hull[3].y);
+      ctx.closePath();
+    }
+    hullPath(); ctx.fillStyle = C.iron; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ironDeep; hullPath(); ctx.stroke();
+    // 水线以下 = 排开的水（高亮）
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, yS, w, h-yS); ctx.clip();
+    hullPath(); ctx.fillStyle = 'rgba(47,182,198,0.30)'; ctx.fill();
+    ctx.setLineDash([6,4]); ctx.lineWidth = 2; ctx.strokeStyle = C.cyanDeep; hullPath(); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    // 集装箱 + 舰桥
+    var cols = ['#B0764A','#4A8FA1','#8B8375','#C99A3F','#5F8A6B'];
+    for (var i=0;i<5;i++){
+      ctx.fillStyle = cols[i];
+      ctx.fillRect(0.24*w + i*0.082*w, 0.245*h, 0.072*w, 0.055*h);
+    }
+    ctx.fillStyle = '#EDE9DD';
+    ctx.fillRect(0.70*w, 0.16*h, 0.09*w, 0.14*h);
+    ctx.strokeStyle = C.ironDeep; ctx.lineWidth = 1.5;
+    ctx.strokeRect(0.70*w, 0.16*h, 0.09*w, 0.14*h);
+    // 水面线（画在船前，压住船身水线处）
+    ctx.beginPath();
+    for (var x=0; x<=w; x+=4){ var yy = yS + Math.sin(x/w*Math.PI*8)*0.006*h; (x===0)?ctx.moveTo(x,yy):ctx.lineTo(x,yy); }
+    ctx.lineWidth = 2; ctx.strokeStyle = C.accent; ctx.stroke();
+    // 载重线（Plimsoll 线示意）
+    ctx.strokeStyle = '#F2EFE6'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0.66*w, 0.435*h, 0.014*w, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0.64*w, 0.435*h); ctx.lineTo(0.68*w, 0.435*h); ctx.stroke();
+    ctx.fillStyle = '#F2EFE6';
+    ctx.font = '700 '+fs+'px "Noto Sans SC", sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText('载重线', 0.695*w, 0.435*h);
+    // 一对等长箭头
+    var xa = 0.46*w, La = 0.15*h;
+    vArrow(ctx, xa, yS+0.005*h, yS-La, C.cyanDeep, 3);
+    vArrow(ctx, xa+0.05*w, yS-0.005*h, yS+La, C.coral, 3);
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(246,244,237,0.9)'; ctx.lineJoin='round';
+    ctx.textAlign='right';
+    ctx.strokeText('浮力＝排开的 10 万吨水', xa-0.018*w, yS-La*0.62);
+    ctx.fillStyle = C.cyanDeep;
+    ctx.fillText('浮力＝排开的 10 万吨水', xa-0.018*w, yS-La*0.62);
+    ctx.textAlign='left';
+    ctx.strokeText('重力＝整船 10 万吨', xa+0.068*w, yS+La*0.7);
+    ctx.fillStyle = C.coral;
+    ctx.fillText('重力＝整船 10 万吨', xa+0.068*w, yS+La*0.7);
+  }
+  drawShip();
+
+  // ---- 滚动浮现 ----
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, { threshold:0.16 });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // ---- resize ----
+  var rt;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){
+      stage = fit(cv); hero = fit(heroCv); shipS = fit(shipCv);
+      if (reduce) drawHero(0.6);
+      drawShip(); onScroll();
+    }, 150);
+  });
+
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(lastP); drawShip(); }); }
+  onScroll();
+})();
+</script>
+</body>
+</html>

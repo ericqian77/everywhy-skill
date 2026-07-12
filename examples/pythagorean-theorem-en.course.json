@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "slug": "pythagorean-theorem-en",
+  "topic": "pythagorean-theorem",
+  "title": "Why does 3-4-5 work?",
+  "summary": "Four identical right triangles, one big square, two arrangements: the hole in the middle turns from c² into a² + b² — the Pythagorean theorem appears on its own.",
+  "tag": "geometry",
+  "level": "general",
+  "lang": "en",
+  "accent": "#2C9678",
+  "author": "ericqian77",
+  "license": "CC BY-SA 4.0",
+  "prerequisites": null,
+  "age_range": null
+}

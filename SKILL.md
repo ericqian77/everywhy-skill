@@ -13,7 +13,7 @@ Everything here falls into three classes. Know which one you're in:
 
 - **Mandatory (M)** — violating these makes the artifact invalid, unsafe, or unreviewable. They live in SPEC.md: verifiable facts independently re-derivable; fully self-contained HTML; accessibility and reduced-motion handling; no outbound requests. Two more live here: **report honestly what you did and didn't verify**, and **never submit or publish unless the user explicitly asked**.
 - **Judgment (J)** — questions you must think through, whose answers this skill deliberately does not prescribe: who the learner is and what they already know; what visible pieces the idea breaks into; how deep the abstraction goes; what the reassembly moment is; whether a misconception is worth addressing.
-- **Recipes (R)** — optional technical patterns in `snippets/`, for mechanics that are easy to get subtly wrong. Load one only when your chosen design needs it.
+- **Recipes (R)** — optional technical patterns in `snippets/`, for mechanics that are easy to get subtly wrong, and craft references in `references/`. Load one only when the step you're on calls for it.
 
 Everything visual and narrative — palette, typography, composition, voice, step count, animation timing — is yours to invent *for this concept*. The files in `examples/` show the **range** of valid quality, not layouts to copy. Two courses on different topics that share a visual skeleton are a failure signal, not compliance.
 
@@ -50,7 +50,7 @@ Match mechanism to concept — the skill prescribes no step count, layout, or du
 
 ### 5. Assemble from the shell
 
-Copy `templates/lesson-shell.html`. It is a **technical shell** — metadata head, self-containment skeleton, reduced-motion hook, navigation placeholders — and deliberately *not* a design. Fill every `【【…】】` placeholder (the validator blocks on leftovers). Inline and adapt any snippet code you use. Do not introduce a build step, a framework, or a shared CSS/JS file — the page must open correctly via `file://`.
+Copy `templates/lesson-shell.html`. It is a **technical shell** — metadata head, self-containment skeleton, reduced-motion hook, navigation placeholders — and deliberately *not* a design. Before inventing the visual system, read `references/design-craft.md`: principles distilled from shipped courses (semantic color, type pairing, layout-stable captions) — defaults to deviate from deliberately, not accidentally. Fill every `【【…】】` placeholder (the validator blocks on leftovers). Inline and adapt any snippet code you use. Do not introduce a build step, a framework, or a shared CSS/JS file — the page must open correctly via `file://`.
 
 ### 6. Static validation
 
@@ -74,7 +74,7 @@ Walk the **whole** course, not just the hero: every canvas state, every stage of
 
 ### 8. Deliver with evidence
 
-Your final note must state: which artifacts you created; the validator commands and their results; what you rendered and at which viewports/stages; any remaining verification gaps; and that you have **not** submitted anything (unless the user asked you to).
+First walk `references/quality-rubric.md` — judgment questions on understanding, correctness, audience fit, visual reasoning, interaction, and originality; a bad answer there is a revision, not a footnote. Then your final note must state: which artifacts you created; the validator commands and their results; what you rendered and at which viewports/stages; any remaining verification gaps; and that you have **not** submitted anything (unless the user asked you to).
 
 ## Variants (bilingual / multi-level)
 

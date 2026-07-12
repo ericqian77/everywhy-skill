@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "slug": "tau-sweep",
+  "topic": "tau",
+  "title": "τ — one full turn",
+  "summary": "Sweep a radius through one full turn and watch both 2πr and πr² appear.",
+  "tag": "geometry",
+  "level": "general",
+  "lang": "en",
+  "accent": "#E7A23E",
+  "author": "ericqian77",
+  "license": "CC BY-SA 4.0",
+  "prerequisites": null,
+  "age_range": null
+}

@@ -1,0 +1,14 @@
+# Codex Agent Skills metadata (optional file, schema per OpenAI's
+# "build skills" docs — interface / policy / dependencies).
+# The skill itself is defined by ../SKILL.md, whose frontmatter format
+# (name/description) Codex reads natively.
+
+interface:
+  display_name: "everywhy course"
+  short_description: "Create an interactive Disassemble (拆解) teaching course for everywhy.ai — one idea, taken apart into animated pieces and reassembled."
+  default_prompt: "Create an everywhy.ai course that takes apart this idea:"
+
+policy:
+  # The SKILL.md description states the trigger conditions; implicit
+  # invocation on matching tasks is intended.
+  allow_implicit_invocation: true

@@ -19,9 +19,19 @@ Create interactive teaching courses for [everywhy.ai](https://everywhy.ai) ("拆
 
 ## Install
 
+Everything here is plain Markdown + zero-dependency Node scripts — no harness-specific format required. Details and the render-verification capability ladder: [`references/harness-notes.md`](references/harness-notes.md).
+
 **Claude Code:** drop this repo's contents into your skills directory (or point Claude Code at this repo as a skill source), then ask it to create an everywhy.ai course. `SKILL.md`'s frontmatter (`name`/`description`) is what triggers it.
 
-**Codex, Cursor, or any other harness:** there's no special integration — just point the agent at `SKILL.md` and `SPEC.md` as instructions (e.g. paste them into context, or reference the files) and ask it to follow the process. Every file here is plain markdown/JS with no harness-specific format.
+**Codex:** this repo is a valid Codex Agent Skill as-is (same `SKILL.md` format; `agents/openai.yaml` carries display metadata). Install:
+
+```bash
+git clone https://github.com/ericqian77/everywhy-skill ~/.agents/skills/everywhy-course
+```
+
+Then trigger via `$everywhy-course`, `/skills`, or implicitly by asking for an everywhy.ai course.
+
+**Cursor or any other harness:** point the agent at `SKILL.md` and `SPEC.md` as instructions (a project rule, or paste into context) and ask it to follow the process. The validators run the same everywhere.
 
 ## Usage
 

@@ -21,7 +21,7 @@ Everything visual and narrative — palette, typography, composition, voice, ste
 
 ### 1. Preflight
 
-Before designing, answer: What language(s), and how many variants? Who is the learner and what do they already know? Do you have a browser or preview path in this environment? (If not, you can still create — but you must report the verification gap at the end.) Does a course on this topic already exist? (Then you're adding a variant — see Variants below.) Did the user ask you to *create*, or also to *submit*? **Creating never implies submitting.**
+Before designing, answer: What language(s), and how many variants? Who is the learner and what do they already know? Do you have a browser or preview path in this environment? (Capability differs by harness — see the render-acceptance ladder in `references/harness-notes.md`. No browser doesn't block creating, but you must report the verification gap at the end.) Does a course on this topic already exist? (Then you're adding a variant — see Variants below.) Did the user ask you to *create*, or also to *submit*? **Creating never implies submitting.**
 
 ### 2. Design the understanding change
 

@@ -14,6 +14,8 @@
 
 var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var playing = false;
+var userPaused = true;
+var inViewport = true;
 var rafId = 0;
 var startT = 0;
 var pausedAt = 0;
@@ -24,25 +26,39 @@ function loop(now){
   rafId = requestAnimationFrame(loop);
 }
 
-function play(){
-  if (reduceMotion || playing) return;
+function startLoop(){
+  if (reduceMotion || playing || userPaused || !inViewport) return;
   playing = true;
   startT = performance.now() - pausedAt * 1000; // resume where we paused
   rafId = requestAnimationFrame(loop);
 }
 
-function pause(){
+function stopLoop(){
   if (!playing) return;
   playing = false;
   pausedAt = (performance.now() - startT) / 1000;
   cancelAnimationFrame(rafId);
 }
 
+function play(){
+  userPaused = false;
+  startLoop();
+}
+
+function pause(){
+  userPaused = true;
+  stopLoop();
+}
+
 /* Pause automatically when the stage leaves the viewport. */
 function gateToViewport(stageEl){
   if (!('IntersectionObserver' in window)) return;
   new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ e.isIntersecting ? play() : pause(); });
+    entries.forEach(function(e){
+      inViewport = e.isIntersecting;
+      if (inViewport) startLoop();
+      else stopLoop();
+    });
   }, { threshold: 0.2 }).observe(stageEl);
 }
 
@@ -50,5 +66,7 @@ function gateToViewport(stageEl){
  *   if (reduceMotion){ draw(0); playBtn.style.display = 'none'; }
  *   else { gateToViewport(stage); playBtn.addEventListener('click',
  *            function(){ playing ? pause() : play(); }); play(); }
- * If autostart feels wrong for your concept, start paused — your call.
+ * Calling pause() records the learner's choice: leaving and re-entering the
+ * viewport will not resume until play() is called again. If autostart feels
+ * wrong for your concept, omit the final play() — your call.
  */

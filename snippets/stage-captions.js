@@ -24,6 +24,7 @@ var stages = [
 
 var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var lastIdx = -1;
+var captionTimer = 0;
 
 function setStage(p){
   var idx = 0;
@@ -32,13 +33,15 @@ function setStage(p){
   }
   if (idx === lastIdx) return;
   lastIdx = idx;
+  if (captionTimer){ clearTimeout(captionTimer); captionTimer = 0; }
   if (reduceMotion){
     capEl.textContent = stages[idx].cap;
     subEl.textContent = stages[idx].sub;
   } else {
     // brief fade-out, swap, fade-in — never a jump-cut mid-read
     capEl.style.opacity = 0; subEl.style.opacity = 0;
-    setTimeout(function(){
+    captionTimer = setTimeout(function(){
+      captionTimer = 0;
       capEl.textContent = stages[idx].cap;
       subEl.textContent = stages[idx].sub;
       capEl.style.opacity = 1; subEl.style.opacity = 1;

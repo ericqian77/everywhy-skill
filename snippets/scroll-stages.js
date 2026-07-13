@@ -40,22 +40,34 @@ function stageIndex(p, stageCount){
  * or rapid scrollTo calls will fight it and stutter. Disable it for the
  * duration of autoplay, restore afterwards. */
 var autoTimer = 0;
+var autoRunning = false;
+var savedScrollBehavior = null;
+
+function restoreScrollBehavior(){
+  if (savedScrollBehavior === null) return;
+  document.documentElement.style.scrollBehavior = savedScrollBehavior;
+  savedScrollBehavior = null;
+}
+
 function autoplay(stops, dwellMs, onDone){
-  if (reduceMotion) return;
+  if (reduceMotion || !Array.isArray(stops) || stops.length === 0) return;
   stopAutoplay();
-  var prevBehavior = document.documentElement.style.scrollBehavior;
+  savedScrollBehavior = document.documentElement.style.scrollBehavior;
+  autoRunning = true;
   var start = story.offsetTop;
   var travel = Math.max(1, story.offsetHeight - window.innerHeight);
   var i = 0;
   function advance(){
-    window.scrollTo({ top: start + travel * stops[i], behavior: 'smooth' });
+    var stop = Math.max(0, Math.min(1, stops[i]));
+    window.scrollTo({ top: start + travel * stop, behavior: 'smooth' });
     i += 1;
     if (i < stops.length){
       autoTimer = setTimeout(advance, dwellMs);
     } else {
       autoTimer = setTimeout(function(){
         autoTimer = 0;
-        document.documentElement.style.scrollBehavior = prevBehavior;
+        autoRunning = false;
+        restoreScrollBehavior();
         if (onDone) onDone();
       }, dwellMs); // let the last stop finish rendering before declaring done
     }
@@ -65,12 +77,31 @@ function autoplay(stops, dwellMs, onDone){
 }
 function stopAutoplay(){
   if (autoTimer){ clearTimeout(autoTimer); autoTimer = 0; }
+  if (autoRunning){
+    autoRunning = false;
+    // Cancel an in-flight smooth scroll at its current position.
+    window.scrollTo({ top: window.scrollY, behavior: 'auto' });
+  }
+  restoreScrollBehavior();
 }
+
+/* Manual navigation always wins over autoplay. A plain `scroll` listener
+ * cannot distinguish user scrolls from scrollTo(), so listen for intent. */
+['wheel', 'touchstart', 'pointerdown'].forEach(function(type){
+  window.addEventListener(type, function(){ if (autoRunning) stopAutoplay(); }, { passive: true });
+});
+window.addEventListener('keydown', function(e){
+  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].indexOf(e.key) >= 0 && autoRunning){
+    stopAutoplay();
+  }
+});
 
 /* Example wiring (adapt freely):
  *   window.addEventListener('scroll', render, { passive: true });
+ *   var courseStops = COURSE_DEFINED_STOPS;
+ *   var courseDwellMs = COURSE_DEFINED_DWELL_MS;
  *   playBtn.addEventListener('click', function(){
- *     autoplay([0.05, 0.3, 0.55, 0.8, 0.995], 3200, function(){ playBtn.textContent = '↻ Replay'; });
+ *     autoplay(courseStops, courseDwellMs, function(){ playBtn.textContent = '↻ Replay'; });
  *   });
  * Choose stops so each teaching state gets its own dwell; dwellMs should be
  * long enough to read the caption you actually wrote, not a default.
